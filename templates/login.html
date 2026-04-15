@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AgroSecure — Login</title>
+    <meta name="description" content="Secure login to AgroSecure — Crop Data Sharing System">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Poppins:wght@600;700;800&display=swap"
+        rel="stylesheet">
+    <style>
+        :root {
+            --primary: #2E7D32;
+            --primary-dark: #1B5E20;
+            --secondary: #4CAF50;
+            --accent: #1976D2;
+            --accent-hover: #1565C0;
+            --bg: #F5F7FA;
+            --card: #FFFFFF;
+            --border: #E2E8F0;
+            --text: #1A202C;
+            --text-muted: #718096;
+            --text-light: #A0AEC0;
+            --error: #DC2626;
+            --error-bg: #FEF2F2;
+            --success: #16A34A;
+            --success-bg: #F0FDF4;
+            --shadow-lg: 0 20px 60px rgba(0, 0, 0, 0.12), 0 8px 20px rgba(0, 0, 0, 0.06);
+            --radius: 14px;
+            --font: 'Inter', -apple-system, sans-serif;
+        }
+
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        html {
+            scroll-behavior: smooth;
+        }
+
+        body {
+            font-family: var(--font);
+            background: var(--bg);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* ---- Background decoration ---- */
+        .bg-blobs {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
+        }
+
+        .blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.35;
+        }
+
+        .blob-1 {
+            width: 500px;
+            height: 500px;
+            top: -120px;
+            left: -100px;
+            background: radial-gradient(circle, #A7F3D0, #6EE7B7);
+        }
+
+        .blob-2 {
+            width: 400px;
+            height: 400px;
+            bottom: -100px;
+            right: -80px;
+            background: radial-gradient(circle, #BFDBFE, #93C5FD);
+        }
+
+        /* ---- Page layout ---- */
+        .page-wrap {
+            position: relative;
+            z-index: 1;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 40px 20px;
+        }
+
+        /* ---- Card ---- */
+        .login-card {
+            background: var(--card);
+            border-radius: 20px;
+            box-shadow: var(--shadow-lg);
+            width: 100%;
+            max-width: 440px;
+            overflow: hidden;
+        }
+
+        .card-top {
+            background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 60%, #DBEAFE 100%);
+            padding: 36px 40px 28px;
+            text-align: center;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .logo {
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 20px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 700;
+            font-size: 1.4rem;
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        .logo-icon {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+            box-shadow: 0 3px 10px rgba(46, 125, 50, 0.35);
+        }
+
+        .logo span {
+            color: var(--text);
+            font-weight: 600;
+        }
+
+        .card-title {
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.35rem;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 6px;
+        }
+
+        .card-subtitle {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            line-height: 1.5;
+        }
+
+        .card-body {
+            padding: 36px 40px 40px;
+        }
+
+        /* ---- Role tabs ---- */
+        .role-tabs {
+            display: flex;
+            background: var(--bg);
+            border-radius: 10px;
+            padding: 4px;
+            margin-bottom: 28px;
+            border: 1px solid var(--border);
+        }
+
+        .role-tab {
+            flex: 1;
+            padding: 9px 12px;
+            border: none;
+            border-radius: 8px;
+            background: transparent;
+            font-family: var(--font);
+            font-size: 0.84rem;
+            font-weight: 500;
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+        }
+
+        .role-tab.active {
+            background: #fff;
+            color: var(--primary);
+            font-weight: 600;
+            box-shadow: 0 1px 4px rgba(0, 0, 0, 0.10);
+        }
+
+        /* ---- Form ---- */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: var(--text);
+            margin-bottom: 8px;
+        }
+
+        .input-wrap {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-prefix {
+            position: absolute;
+            left: 15px;
+            font-size: 0.875rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            user-select: none;
+        }
+
+        input[type="tel"],
+        input[type="text"] {
+            width: 100%;
+            background: #FAFAFA;
+            border: 1.5px solid var(--border);
+            border-radius: 10px;
+            color: var(--text);
+            font-family: var(--font);
+            font-size: 0.95rem;
+            padding: 13px 16px 13px 52px;
+            transition: all 0.2s;
+            outline: none;
+            letter-spacing: 0.01em;
+        }
+
+        input[type="tel"]:focus,
+        input[type="text"]:focus {
+            border-color: var(--accent);
+            background: #fff;
+            box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.09);
+        }
+
+        input::placeholder {
+            color: var(--text-light);
+        }
+
+        /* OTP input special */
+        .otp-input-wrap {
+            display: flex;
+            gap: 10px;
+        }
+
+        .otp-input-wrap input {
+            flex: 1;
+            padding: 13px 16px;
+            text-align: center;
+            font-size: 1.4rem;
+            font-weight: 700;
+            letter-spacing: 0.3em;
+            border-radius: 10px;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        /* ---- Buttons ---- */
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border-radius: 10px;
+            font-family: var(--font);
+            font-size: 0.95rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-green {
+            background: var(--primary);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(46, 125, 50, 0.3);
+        }
+
+        .btn-green:hover {
+            background: var(--primary-dark);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 16px rgba(46, 125, 50, 0.4);
+        }
+
+        .btn-blue {
+            background: var(--accent);
+            color: #fff;
+            box-shadow: 0 3px 10px rgba(25, 118, 210, 0.3);
+        }
+
+        .btn-blue:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+            box-shadow: 0 5px 16px rgba(25, 118, 210, 0.4);
+        }
+
+        .btn:disabled {
+            opacity: 0.55;
+            cursor: not-allowed;
+            transform: none !important;
+            box-shadow: none !important;
+        }
+
+        /* ---- Alert messages ---- */
+        .alert {
+            border-radius: 10px;
+            padding: 13px 16px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            line-height: 1.5;
+            display: none;
+        }
+
+        .alert.visible {
+            display: flex;
+        }
+
+        .alert-error {
+            background: var(--error-bg);
+            color: var(--error);
+            border: 1px solid #FECACA;
+        }
+
+        .alert-success {
+            background: var(--success-bg);
+            color: var(--success);
+            border: 1px solid #86EFAC;
+        }
+
+        .alert-info {
+            background: #EFF6FF;
+            color: #1e40af;
+            border: 1px solid #BFDBFE;
+        }
+
+        /* ---- Steps ---- */
+        .step {
+            display: none;
+        }
+
+        .step.active {
+            display: block;
+        }
+
+        /* ---- OTP Timer ---- */
+        .otp-meta {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 10px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .resend-btn {
+            background: none;
+            border: none;
+            color: var(--accent);
+            font-size: 0.78rem;
+            font-weight: 600;
+            cursor: pointer;
+            padding: 0;
+            font-family: var(--font);
+        }
+
+        .resend-btn:disabled {
+            color: var(--text-light);
+            cursor: not-allowed;
+        }
+
+        /* ---- Spinner ---- */
+        .spinner {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.35);
+            border-top-color: #fff;
+            border-radius: 50%;
+            animation: spin 0.65s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        /* ---- Security note ---- */
+        .security-note {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 6px;
+            font-size: 0.75rem;
+            color: var(--text-light);
+            margin-top: 20px;
+        }
+
+        /* ---- Footer ---- */
+        .page-footer {
+            position: relative;
+            z-index: 1;
+            text-align: center;
+            padding: 20px;
+            font-size: 0.78rem;
+            color: var(--text-muted);
+        }
+
+        .page-footer a {
+            color: var(--primary);
+            text-decoration: none;
+        }
+
+        @media (max-width: 480px) {
+            .card-top {
+                padding: 28px 24px 20px;
+            }
+
+            .card-body {
+                padding: 24px 24px 28px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="bg-blobs">
+        <div class="blob blob-1"></div>
+        <div class="blob blob-2"></div>
+    </div>
+
+    <div class="page-wrap">
+        <div class="login-card">
+
+            <!-- Card Header -->
+            <div class="card-top">
+                <a href="/" class="logo">
+                    <div class="logo-icon">🌾</div>
+                    Agro<span>Secure</span>
+                </a>
+                <div class="card-title">Welcome Back</div>
+                <div class="card-subtitle">Sign in with your mobile number via OTP</div>
+            </div>
+
+            <!-- Card Body -->
+            <div class="card-body">
+
+                <!-- Role Selector -->
+                <div class="role-tabs">
+                    <button class="role-tab active" id="tab-farmer" onclick="setRole('farmer')">
+                        👨‍🌾 Farmer
+                    </button>
+                    <button class="role-tab" id="tab-officer" onclick="setRole('officer')">
+                        🏛️ Dept. Officer
+                    </button>
+                </div>
+
+                <!-- STEP 1: Phone number entry -->
+                <div class="step active" id="step-phone">
+
+                    <div class="alert alert-error" id="phone-error"></div>
+
+                    <div class="form-group">
+                        <label for="phone-input">Mobile Number</label>
+                        <div class="input-wrap">
+                            <span class="input-prefix">🇮🇳 +91</span>
+                            <input type="tel" id="phone-input" placeholder="  Phone no" maxlength="10"
+                                oninput="this.value=this.value.replace(/\D/g,'')"
+                                onkeydown="if(event.key==='Enter') sendOTP()">
+                        </div>
+                    </div>
+
+                    <button class="btn btn-green" id="send-btn" onclick="sendOTP()">
+                        Send OTP via SMS
+                    </button>
+
+                    <div class="security-note">
+                        🔒 OTP will be sent to your registered mobile number
+                    </div>
+                </div>
+
+                <!-- STEP 2: OTP verification -->
+                <div class="step" id="step-otp">
+
+                    <div class="alert alert-info visible" id="otp-sent-msg"></div>
+                    <div class="alert alert-error" id="otp-error"></div>
+                    <div class="alert alert-success" id="otp-success"></div>
+
+                    <div class="form-group">
+                        <label for="otp-input">Enter 6-Digit OTP</label>
+                        <div class="otp-input-wrap">
+                            <input type="text" id="otp-input" placeholder="------" maxlength="6"
+                                oninput="this.value=this.value.replace(/\D/g,'')"
+                                onkeydown="if(event.key==='Enter') verifyOTP()">
+                        </div>
+                        <div class="otp-meta">
+                            <span id="timer-text">Resend in <span id="countdown">30</span>s</span>
+                            <button class="resend-btn" id="resend-btn" onclick="resendOTP()" disabled>Resend
+                                OTP</button>
+                        </div>
+                    </div>
+
+                    <button class="btn btn-blue" id="verify-btn" onclick="verifyOTP()">
+                        Verify &amp; Login
+                    </button>
+
+                    <div style="text-align:center;margin-top:16px">
+                        <button onclick="goBack()"
+                            style="background:none;border:none;color:var(--text-muted);font-size:0.82rem;cursor:pointer;font-family:var(--font);">
+                            ← Use a different number
+                        </button>
+                    </div>
+
+                    <div class="security-note">
+                        🔒 OTP expires in 10 minutes
+                    </div>
+                </div>
+
+            </div><!-- end card-body -->
+        </div><!-- end login-card -->
+    </div><!-- end page-wrap -->
+
+    <div class="page-footer">
+        <a href="/">← Back to AgroSecure Home</a> &nbsp;·&nbsp; Secured with AES-128 · SHA-256 · RSA-2048
+    </div>
+
+    <script>
+        let currentRole = 'farmer';
+        let currentPhone = '';
+        let timerInterval = null;
+
+        // ---- Safe JSON parser (handles HTML error pages) ----
+        async function safeJson(res) {
+            const text = await res.text();
+            try { return JSON.parse(text); }
+            catch { return { success: false, error: `Server error (${res.status}): ${text.substring(0, 120)}` }; }
+        }
+
+        // ---- Role switch ----
+        function setRole(role) {
+            currentRole = role;
+            document.getElementById('tab-farmer').classList.toggle('active', role === 'farmer');
+            document.getElementById('tab-officer').classList.toggle('active', role === 'officer');
+        }
+
+        // ---- Alert helpers ----
+        function showAlert(id, msg, type) {
+            ['phone-error', 'otp-error', 'otp-success', 'otp-sent-msg'].forEach(i => {
+                const el = document.getElementById(i);
+                if (el) { el.classList.remove('visible'); el.textContent = ''; }
+            });
+            if (id && msg) {
+                const el = document.getElementById(id);
+                el.textContent = msg;
+                el.className = `alert alert-${type} visible`;
+            }
+        }
+
+        // ---- Step navigation ----
+        function showStep(step) {
+            document.querySelectorAll('.step').forEach(s => s.classList.remove('active'));
+            document.getElementById('step-' + step).classList.add('active');
+        }
+        function goBack() {
+            clearInterval(timerInterval);
+            showStep('phone');
+            showAlert(null, '', '');
+        }
+
+        // ---- Countdown timer ----
+        function startTimer(seconds = 30) {
+            const countEl = document.getElementById('countdown');
+            const timerTxt = document.getElementById('timer-text');
+            const resendBtn = document.getElementById('resend-btn');
+            let remaining = seconds;
+            resendBtn.disabled = true;
+            timerTxt.style.display = 'inline';
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                remaining--;
+                countEl.textContent = remaining;
+                if (remaining <= 0) {
+                    clearInterval(timerInterval);
+                    timerTxt.style.display = 'none';
+                    resendBtn.disabled = false;
+                }
+            }, 1000);
+        }
+
+        // ---- Send OTP ----
+        async function sendOTP() {
+            const phone = document.getElementById('phone-input').value.trim();
+            if (phone.length !== 10) {
+                showAlert('phone-error', '⚠️ Please enter a valid 10-digit mobile number.', 'error');
+                return;
+            }
+            currentPhone = '+91' + phone;
+            const btn = document.getElementById('send-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Sending OTP…';
+            showAlert(null, '', '');
+
+            try {
+                const res = await fetch('/api/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: currentPhone, role: currentRole })
+                });
+                const json = await safeJson(res);
+                if (json.success) {
+                    showStep('otp');
+                    document.getElementById('otp-sent-msg').textContent = `📱 OTP sent to +91 ${phone.slice(0, 5)}XXXXX`;
+                    document.getElementById('otp-sent-msg').className = 'alert alert-info visible';
+                    startTimer(30);
+                } else {
+                    showAlert('phone-error', '❌ ' + (json.error || 'Failed to send OTP. Try again.'), 'error');
+                }
+            } catch (e) {
+                showAlert('phone-error', '❌ ' + e.message, 'error');
+            } finally {
+                btn.disabled = false;
+                btn.innerHTML = 'Send OTP via SMS';
+            }
+        }
+
+        // ---- Verify OTP ----
+        async function verifyOTP() {
+            const otp = document.getElementById('otp-input').value.trim();
+            if (otp.length !== 6) {
+                showAlert('otp-error', '⚠️ Please enter the 6-digit OTP.', 'error');
+                return;
+            }
+            const btn = document.getElementById('verify-btn');
+            btn.disabled = true;
+            btn.innerHTML = '<span class="spinner"></span> Verifying…';
+
+            try {
+                const res = await fetch('/api/verify-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: currentPhone, otp: otp, role: currentRole })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    clearInterval(timerInterval);
+                    showAlert('otp-success', '✅ Verified! Redirecting…', 'success');
+                    setTimeout(() => { window.location.href = json.redirect; }, 1200);
+                } else {
+                    showAlert('otp-error', '❌ ' + (json.error || 'Incorrect OTP. Please try again.'), 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = 'Verify &amp; Login';
+                }
+            } catch (e) {
+                showAlert('otp-error', '❌ Network error. Please try again.', 'error');
+                btn.disabled = false;
+                btn.innerHTML = 'Verify &amp; Login';
+            }
+        }
+
+        // ---- Resend OTP ----
+        async function resendOTP() {
+            document.getElementById('otp-input').value = '';
+            showAlert('otp-sent-msg', '📱 Resending OTP…', 'info');
+            await sendOTPToPhone();
+        }
+
+        async function sendOTPToPhone() {
+            try {
+                const res = await fetch('/api/send-otp', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ phone: currentPhone, role: currentRole })
+                });
+                const json = await res.json();
+                if (json.success) {
+                    showAlert('otp-sent-msg', '📱 OTP resent successfully!', 'info');
+                    startTimer(30);
+                } else {
+                    showAlert('otp-error', '❌ Failed to resend OTP.', 'error');
+                }
+            } catch (e) {
+                showAlert('otp-error', '❌ Network error.', 'error');
+            }
+        }
+    </script>
+</body>
+
+</html>

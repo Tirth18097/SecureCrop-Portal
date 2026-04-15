@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Farmer Portal — AgroSecure</title>
+  <meta name="description"
+    content="Securely submit and encrypt crop data through the AgroSecure Farmer Portal using AES, SHA-256, and RSA encryption.">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ===================== CSS VARIABLES ===================== */
+    :root {
+      --primary: #2E7D32;
+      --primary-dark: #1B5E20;
+      --secondary: #4CAF50;
+      --accent: #1976D2;
+      --accent-hover: #1565C0;
+      --bg: #F5F7FA;
+      --surface: #FFFFFF;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --border-hover: #CBD5E0;
+      --text: #1A202C;
+      --text-muted: #718096;
+      --text-light: #A0AEC0;
+      --success-bg: #F0FDF4;
+      --success-text: #166534;
+      --success-bdr: #86EFAC;
+      --error-bg: #FEF2F2;
+      --error-text: #991B1B;
+      --error-bdr: #FECACA;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.10), 0 4px 10px rgba(0, 0, 0, 0.05);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      --transition: all 0.2s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* ===================== NAVBAR ===================== */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 1.25rem; color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+    .nav-logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+    }
+    .nav-logo span { color: var(--text); font-weight: 600; }
+    .nav-links {
+      display: flex; align-items: center; gap: 4px; list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.875rem; font-weight: 500;
+      padding: 7px 14px; border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+    .nav-links a:hover { color: var(--primary); background: #F0FDF4; }
+    .nav-links a.active { color: var(--primary); background: #F0FDF4; font-weight: 600; }
+    .nav-cta {
+      background: var(--accent) !important; color: #fff !important;
+      padding: 7px 18px !important; border-radius: var(--radius-sm) !important;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--accent-hover) !important; color: #fff !important; }
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text); border-radius: 2px; transition: var(--transition);
+    }
+
+    /* ===================== PAGE HERO ===================== */
+    .page-hero {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 40%, #E8F5E9 100%);
+      padding: 48px 40px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; top: -80px; right: -80px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(76,175,80,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute; bottom: -60px; left: -60px;
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(46,125,50,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .page-hero-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px; margin: 0 auto 20px;
+      box-shadow: 0 8px 24px rgba(46, 125, 50, 0.3);
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .page-hero h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800; color: var(--text);
+      letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .page-hero h1 .highlight { color: var(--primary); }
+    .page-hero p {
+      color: var(--text-muted); font-size: 0.95rem;
+      max-width: 480px; margin: 0 auto; line-height: 1.7;
+    }
+
+    /* ===================== MAIN CONTENT ===================== */
+    .portal-content {
+      max-width: 720px;
+      margin: -32px auto 60px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===================== CARD ===================== */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-md);
+    }
+    .card-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 28px; padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-header-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .card-header-icon.green { background: #F0FDF4; }
+    .card-header-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.15rem; font-weight: 700; color: var(--text);
+    }
+    .card-header-subtitle {
+      font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;
+    }
+
+    /* ===================== FORM ===================== */
+    .form-group { margin-bottom: 22px; }
+    label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: var(--text); margin-bottom: 8px;
+    }
+    input, textarea, select {
+      width: 100%; background: #FAFAFA;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text); font-family: var(--font-sans);
+      font-size: 0.875rem; padding: 12px 16px;
+      transition: var(--transition); outline: none;
+      appearance: none; -webkit-appearance: none;
+    }
+    input:focus, textarea:focus, select:focus {
+      border-color: var(--accent); background: #fff;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.09);
+    }
+    input::placeholder, textarea::placeholder { color: var(--text-light); }
+    textarea { resize: vertical; min-height: 120px; line-height: 1.6; }
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23718096'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+      background-repeat: no-repeat; background-position: right 12px center;
+      background-size: 18px; padding-right: 40px;
+    }
+
+    /* ===================== BUTTONS ===================== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border-radius: var(--radius-sm);
+      font-family: var(--font-sans); font-size: 0.95rem;
+      font-weight: 600; cursor: pointer; border: none;
+      transition: var(--transition); text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-green {
+      background: var(--primary); color: #fff;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+    }
+    .btn-green:hover {
+      background: var(--primary-dark); transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(46, 125, 50, 0.4);
+    }
+    .btn:disabled {
+      opacity: 0.55; cursor: not-allowed;
+      transform: none !important; box-shadow: none !important;
+    }
+    .btn-block { width: 100%; justify-content: center; }
+    .btn-outline-sm {
+      display: inline-flex; align-items: center; gap: 6px;
+      padding: 8px 18px; border-radius: var(--radius-sm);
+      font-family: var(--font-sans); font-size: 0.82rem;
+      font-weight: 600; cursor: pointer; text-decoration: none;
+      background: transparent; color: var(--accent);
+      border: 1.5px solid var(--accent); transition: var(--transition);
+    }
+    .btn-outline-sm:hover {
+      background: var(--accent); color: #fff; transform: translateY(-1px);
+    }
+
+    /* ===================== PROCESSING LOG ===================== */
+    .process-log {
+      background: #F8FAFC;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px; margin-top: 22px;
+      display: none;
+    }
+    .process-log-header {
+      display: flex; align-items: center; gap: 8px;
+      margin-bottom: 14px; padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+    .log-dot { width: 8px; height: 8px; border-radius: 50%; }
+    .log-dot.red { background: #F87171; }
+    .log-dot.amber { background: #FBBF24; }
+    .log-dot.green { background: #4ADE80; }
+    .log-title {
+      font-size: 0.7rem; font-weight: 600; color: var(--text-muted);
+      letter-spacing: 0.08em; text-transform: uppercase; margin-left: 4px;
+    }
+    .log-line {
+      display: flex; gap: 8px; padding: 5px 0;
+      font-size: 0.8rem; border-bottom: 1px solid #EDF2F7;
+      align-items: flex-start;
+    }
+    .log-line:last-child { border-bottom: none; }
+    .log-label {
+      font-family: 'Courier New', monospace; font-size: 0.72rem;
+      color: var(--primary); font-weight: 700;
+      white-space: nowrap; flex-shrink: 0; padding-top: 1px;
+    }
+    .log-value { color: var(--text); word-break: break-all; line-height: 1.5; }
+    .log-success { color: #16A34A; font-weight: 600; }
+    .log-warn {
+      color: #D97706; font-family: 'Courier New', monospace;
+      font-size: 0.72rem; word-break: break-all;
+    }
+    .log-error { color: #DC2626; font-weight: 600; }
+
+    /* ===================== SPINNER ===================== */
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===================== NOTIFICATION ===================== */
+    #notification {
+      position: fixed; top: 24px; right: 24px; z-index: 1000;
+      background: var(--card); border-left: 4px solid var(--primary);
+      color: var(--text); font-size: 0.875rem; font-weight: 500;
+      padding: 14px 20px; border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg); transform: translateX(200%);
+      transition: transform 0.3s ease; max-width: 340px;
+    }
+    #notification.show { transform: translateX(0); }
+    #notification.error { border-left-color: #DC2626; }
+
+    /* ===================== BACK LINK ===================== */
+    .back-link {
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.82rem; font-weight: 500;
+      padding: 6px 12px; border-radius: var(--radius-sm);
+      transition: var(--transition); margin-bottom: 16px;
+    }
+    .back-link:hover { color: var(--primary); background: #F0FDF4; }
+
+    /* ===================== FOOTER ===================== */
+    footer {
+      background: #1A202C; color: #A0AEC0;
+      padding: 32px 40px; text-align: center;
+      font-size: 0.82rem;
+    }
+    footer a { color: #718096; text-decoration: none; }
+    footer a:hover { color: #A0AEC0; }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 768px) {
+      .navbar { padding: 0 20px; }
+      .nav-links {
+        display: none; flex-direction: column;
+        position: absolute; top: 64px; left: 0; right: 0;
+        background: #fff; border-bottom: 1px solid var(--border);
+        padding: 12px 20px; box-shadow: var(--shadow-md); gap: 2px;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 14px; display: block; border-radius: var(--radius-sm); }
+      .nav-hamburger { display: flex; }
+      .page-hero { padding: 40px 20px 32px; }
+      .portal-content { padding: 0 16px; margin-top: -24px; }
+      .card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="navbar">
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon">🌾</div>
+      Agro<span>Secure</span>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/farmer" class="active">Farmer Portal</a></li>
+      <li><a href="/department">Department Portal</a></li>
+      <li><a href="/logout" class="nav-cta" style="background:var(--primary)!important;color:#fff!important;"
+          onclick="return confirm('Are you sure you want to logout?')">🚪 Logout</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ===================== PAGE HERO ===================== -->
+  <section class="page-hero">
+    <div class="page-hero-icon">👨‍🌾</div>
+    <h1>Farmer <span class="highlight">Portal</span></h1>
+    <p>Upload and encrypt your crop data securely. All information is protected with AES-128 encryption, SHA-256
+      integrity hashing, and RSA-2048 digital signatures.</p>
+  </section>
+
+  <!-- ===================== PORTAL CONTENT ===================== -->
+  <div class="portal-content">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon green">🔒</div>
+        <div>
+          <div class="card-header-title">Encrypt & Submit Crop Data</div>
+          <div class="card-header-subtitle">Fill in the details below to securely store your data</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="farmer-name">Farmer Name</label>
+        <input type="text" id="farmer-name" placeholder="e.g. Rajesh Kumar" autocomplete="name">
+      </div>
+      <div class="form-group">
+        <label for="crop-type">Crop Type</label>
+        <select id="crop-type">
+          <option value="">Select crop...</option>
+          <option>Rice</option>
+          <option>Wheat</option>
+          <option>Maize</option>
+          <option>Cotton</option>
+          <option>Sugarcane</option>
+          <option>Soybean</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label for="crop-data">Crop Data</label>
+        <textarea id="crop-data"
+          placeholder="e.g. Soil moisture: 45%, Fertilizer: Urea 50kg/ha, Yield estimate: 3.2 tons/ha, Field area: 5 acres"></textarea>
+      </div>
+      <button class="btn btn-green btn-block" id="encrypt-btn" onclick="encryptData()">
+        🔒 Encrypt &amp; Submit
+      </button>
+
+      <div class="process-log" id="encrypt-terminal">
+        <div class="process-log-header">
+          <div class="log-dot red"></div>
+          <div class="log-dot amber"></div>
+          <div class="log-dot green"></div>
+          <span class="log-title">Encryption Log</span>
+        </div>
+        <div id="encrypt-output"></div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div>© 2024 AgroSecure — Secure Crop Data Sharing System · <a href="/">Home</a></div>
+  </footer>
+
+  <div id="notification"></div>
+
+  <script>
+    /* ---- NAVBAR toggle ---- */
+    function toggleNav() {
+      document.getElementById('nav-links').classList.toggle('open');
+    }
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.addEventListener('click', () => document.getElementById('nav-links').classList.remove('open'));
+    });
+
+    /* ---- NOTIFICATION ---- */
+    function notify(msg, ok = true) {
+      const n = document.getElementById('notification');
+      n.textContent = msg;
+      n.classList.toggle('error', !ok);
+      n.style.borderLeftColor = ok ? 'var(--primary)' : '#DC2626';
+      n.classList.add('show');
+      setTimeout(() => n.classList.remove('show'), 3500);
+    }
+
+    /* ---- LOG LINE helpers ---- */
+    function logLine(container, label, value, cls = 'log-value') {
+      const div = document.createElement('div');
+      div.className = 'log-line';
+      div.innerHTML = `<span class="log-label">[${label}]</span><span class="${cls}">${value}</span>`;
+      container.appendChild(div);
+    }
+
+    /* ---- ENCRYPT ---- */
+    async function encryptData() {
+      const name = document.getElementById('farmer-name').value.trim();
+      const crop = document.getElementById('crop-type').value;
+      const data = document.getElementById('crop-data').value.trim();
+
+      if (!name || !crop || !data) { notify('Please fill all fields', false); return; }
+
+      const btn = document.getElementById('encrypt-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Encrypting…';
+
+      const term = document.getElementById('encrypt-terminal');
+      const out = document.getElementById('encrypt-output');
+      term.style.display = 'block';
+      out.innerHTML = '';
+
+      const cropData = `Crop: ${crop} | ${data}`;
+
+      try {
+        const res = await fetch('/api/encrypt', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ farmer_name: name, crop_data: cropData })
+        });
+        const json = await res.json();
+
+        if (json.success) {
+          json.steps.forEach((s, i) => {
+            setTimeout(() => logLine(out, `STEP ${i + 1}`, s, 'log-success'), i * 200);
+          });
+          setTimeout(() => {
+            logLine(out, 'RECORD_ID', `#${json.record_id}`, 'log-value');
+            logLine(out, 'SHA256', json.sha256_hash.substring(0, 32) + '…', 'log-value');
+            logLine(out, 'AES_CT', json.encrypted_data, 'log-warn');
+            logLine(out, 'SIG', json.signature_preview, 'log-warn');
+            logLine(out, 'STATUS', '✅ Data secured in database', 'log-success');
+            notify(`Record #${json.record_id} encrypted & stored!`);
+            document.getElementById('success-actions').style.display = 'block';
+          }, json.steps.length * 200 + 100);
+        }
+      } catch (e) {
+        logLine(out, 'ERROR', e.message, 'log-error');
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔒 Encrypt &amp; Submit';
+      }
+    }
+  </script>
+</body>
+
+</html>

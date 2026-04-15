@@ -1,0 +1,1698 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AgroSecure — Secure Crop Data Sharing System</title>
+  <meta name="description"
+    content="A cryptography-based platform enabling farmers and agricultural departments to securely exchange crop information using AES, SHA-256, and RSA encryption.">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ===================== CSS VARIABLES ===================== */
+    :root {
+      --primary: #2E7D32;
+      --primary-dark: #1B5E20;
+      --secondary: #4CAF50;
+      --accent: #1976D2;
+      --accent-hover: #1565C0;
+      --bg: #F5F7FA;
+      --surface: #FFFFFF;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --border-hover: #CBD5E0;
+      --text: #1A202C;
+      --text-muted: #718096;
+      --text-light: #A0AEC0;
+      --success-bg: #F0FDF4;
+      --success-text: #166534;
+      --success-bdr: #86EFAC;
+      --error-bg: #FEF2F2;
+      --error-text: #991B1B;
+      --error-bdr: #FECACA;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.10), 0 4px 10px rgba(0, 0, 0, 0.05);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      --transition: all 0.2s ease;
+    }
+
+    /* ===================== RESET & BASE ===================== */
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+
+    html {
+      scroll-behavior: smooth;
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* ===================== NAVBAR ===================== */
+    .navbar {
+      position: sticky;
+      top: 0;
+      z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px;
+      height: 64px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .nav-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      text-decoration: none;
+      font-family: 'Poppins', sans-serif;
+      font-weight: 700;
+      font-size: 1.25rem;
+      color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+
+    .nav-logo-icon {
+      width: 36px;
+      height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+    }
+
+    .nav-logo span {
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .nav-links {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      list-style: none;
+    }
+
+    .nav-links a {
+      color: var(--text-muted);
+      text-decoration: none;
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 7px 14px;
+      border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+
+    .nav-links a:hover {
+      color: var(--primary);
+      background: #F0FDF4;
+    }
+
+    .nav-cta {
+      background: var(--accent) !important;
+      color: #fff !important;
+      padding: 7px 18px !important;
+      border-radius: var(--radius-sm) !important;
+      font-weight: 600 !important;
+    }
+
+    .nav-cta:hover {
+      background: var(--accent-hover) !important;
+      color: #fff !important;
+    }
+
+    .nav-hamburger {
+      display: none;
+      flex-direction: column;
+      gap: 5px;
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+    }
+
+    .nav-hamburger span {
+      display: block;
+      width: 22px;
+      height: 2px;
+      background: var(--text);
+      border-radius: 2px;
+      transition: var(--transition);
+    }
+
+    /* ===================== HERO ===================== */
+    .hero {
+      background: linear-gradient(135deg, #F0FDF4 0%, #DCFCE7 40%, #DBEAFE 100%);
+      padding: 60px 40px;
+      position: relative;
+      overflow: hidden;
+      min-height: 480px;
+      display: flex;
+      align-items: center;
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: -60px; right: -60px;
+      width: 400px; height: 400px;
+      background: radial-gradient(circle, rgba(76,175,80,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -60px; left: -60px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(25,118,210,0.10) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .hero-inner {
+      position: relative;
+      z-index: 1;
+      max-width: 1200px;
+      margin: 0 auto;
+      width: 100%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 48px;
+    }
+    .hero-text { flex: 1; text-align: left; }
+
+    /* ---- Animation column ---- */
+    .hero-anim-wrap {
+      flex: 0 0 360px;
+      height: 360px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .hero-ring-outer {
+      position: absolute;
+      width: 330px; height: 330px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(46,125,50,0.28);
+      animation: rotateRing 20s linear infinite;
+    }
+    .hero-ring-inner {
+      position: absolute;
+      width: 215px; height: 215px;
+      border-radius: 50%;
+      border: 1.5px dashed rgba(25,118,210,0.22);
+      animation: rotateRing 12s linear infinite reverse;
+    }
+    .hero-glow {
+      position: absolute;
+      width: 130px; height: 130px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(46,125,50,0.22) 0%, transparent 70%);
+      animation: heroPulse 2.8s ease-in-out infinite;
+    }
+    .hero-shield {
+      position: relative;
+      z-index: 5;
+      width: 88px; height: 88px;
+      background: linear-gradient(135deg, #2E7D32, #4CAF50);
+      border-radius: 50% 50% 45% 45% / 50% 50% 40% 40%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 36px;
+      box-shadow: 0 8px 30px rgba(46,125,50,0.35), 0 0 0 8px rgba(46,125,50,0.10);
+      animation: shieldFloat 3.5s ease-in-out infinite;
+    }
+    .orbit-icon {
+      position: absolute;
+      width: 50px; height: 50px;
+      border-radius: 50%;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px;
+      box-shadow: 0 4px 14px rgba(0,0,0,0.10);
+      z-index: 6;
+    }
+    .orbit-1{background:#fff;    border:1.5px solid #DCFCE7;top:10px;   left:50%; transform:translateX(-50%);animation:bobV 3.0s ease-in-out infinite;}
+    .orbit-2{background:#EFF6FF; border:1.5px solid #BFDBFE;right:16px; top:50%;  transform:translateY(-50%);animation:bobH 3.8s ease-in-out infinite 0.5s;}
+    .orbit-3{background:#FAF5FF; border:1.5px solid #DDD6FE;bottom:10px;left:50%; transform:translateX(-50%);animation:bobV 3.2s ease-in-out infinite 1.0s;}
+    .orbit-4{background:#FFF7ED; border:1.5px solid #FED7AA;left:16px;  top:50%;  transform:translateY(-50%);animation:bobH 4.0s ease-in-out infinite 0.8s;}
+    .float-dot{position:absolute;border-radius:50%;animation:floatDot 4s ease-in-out infinite;}
+    .float-dot:nth-child(1){width:8px;height:8px;background:rgba(76,175,80,0.6);  top:15%;  left:15%;  animation-delay:0.0s;}
+    .float-dot:nth-child(2){width:5px;height:5px;background:rgba(25,118,210,0.5); top:20%;  right:18%; animation-delay:0.8s;}
+    .float-dot:nth-child(3){width:7px;height:7px;background:rgba(156,39,176,0.35);bottom:18%;left:20%; animation-delay:1.5s;}
+    .float-dot:nth-child(4){width:4px;height:4px;background:rgba(255,152,0,0.5);  bottom:16%;right:16%;animation-delay:2.2s;}
+    .float-dot:nth-child(5){width:6px;height:6px;background:rgba(46,125,50,0.5);  top:48%;  left:5%;   animation-delay:1.0s;}
+    @keyframes rotateRing  {to{transform:rotate(360deg);}}
+    @keyframes heroPulse   {0%,100%{transform:scale(1);opacity:0.8;}50%{transform:scale(1.35);opacity:0.3;}}
+    @keyframes shieldFloat {0%,100%{transform:translateY(0);}50%{transform:translateY(-12px);}}
+    @keyframes bobV        {0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(-8px);}}
+    @keyframes bobH        {0%,100%{transform:translateY(-50%) translateX(0);}50%{transform:translateY(-50%) translateX(-6px);}}
+    @keyframes floatDot    {0%,100%{transform:translateY(0) scale(1);opacity:0.5;}50%{transform:translateY(-14px) scale(1.3);opacity:0.9;}}
+    @media(max-width:960px){
+      .hero{padding:60px 24px;min-height:auto;}
+      .hero-inner{flex-direction:column;gap:32px;}
+      .hero-text{text-align:center;}
+      .hero-anim-wrap{flex:0 0 280px;height:280px;}
+      .hero-ring-outer{width:250px;height:250px;}
+      .hero-ring-inner{width:165px;height:165px;}
+    }
+    @media(max-width:560px){.hero-anim-wrap{display:none;}}
+
+    .hero-stats {
+      display: flex;
+      gap: 40px;
+      justify-content: center;
+      margin-top: 56px;
+      flex-wrap: wrap;
+    }
+
+    .hero-stat {
+      text-align: center;
+    }
+
+    .hero-stat-value {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem;
+      font-weight: 700;
+      color: var(--primary);
+    }
+
+    .hero-stat-label {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+      font-weight: 500;
+    }
+
+    /* ===================== BUTTONS ===================== */
+    .btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 12px 26px;
+      border-radius: var(--radius-sm);
+      font-family: var(--font-sans);
+      font-size: 0.9rem;
+      font-weight: 600;
+      cursor: pointer;
+      border: none;
+      transition: var(--transition);
+      text-decoration: none;
+      white-space: nowrap;
+    }
+
+    .btn-primary {
+      background: var(--accent);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+    }
+
+    .btn-primary:hover {
+      background: var(--accent-hover);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.4);
+    }
+
+    .btn-green {
+      background: var(--primary);
+      color: #fff;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+    }
+
+    .btn-green:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(46, 125, 50, 0.4);
+    }
+
+    .btn-outline {
+      background: transparent;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+    }
+
+    .btn-outline:hover {
+      background: var(--primary);
+      color: #fff;
+      transform: translateY(-1px);
+    }
+
+    .btn:disabled {
+      opacity: 0.55;
+      cursor: not-allowed;
+      transform: none !important;
+      box-shadow: none !important;
+    }
+
+    .btn-block {
+      width: 100%;
+      justify-content: center;
+    }
+
+    /* ===================== LAYOUT ===================== */
+    .container {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 0 40px;
+    }
+
+    .section {
+      padding: 72px 0;
+    }
+
+    .section-alt {
+      background: var(--surface);
+    }
+
+    .section-header {
+      text-align: center;
+      margin-bottom: 52px;
+    }
+
+    .section-tag {
+      display: inline-block;
+      background: #F0FDF4;
+      color: var(--primary);
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 5px 14px;
+      border-radius: 100px;
+      margin-bottom: 14px;
+      border: 1px solid rgba(46, 125, 50, 0.2);
+    }
+
+    .section-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.5rem, 3vw, 2rem);
+      font-weight: 700;
+      color: var(--text);
+      letter-spacing: -0.02em;
+      margin-bottom: 10px;
+    }
+
+    .section-desc {
+      color: var(--text-muted);
+      font-size: 0.95rem;
+      max-width: 520px;
+      margin: 0 auto;
+      line-height: 1.7;
+    }
+
+    /* ===================== SECURITY CARDS ===================== */
+    .security-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 24px;
+    }
+
+    .security-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      transition: var(--transition);
+      position: relative;
+      overflow: hidden;
+    }
+
+    .security-card::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 3px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+
+    .security-card:nth-child(1)::before {
+      background: linear-gradient(90deg, #2E7D32, #4CAF50);
+    }
+
+    .security-card:nth-child(2)::before {
+      background: linear-gradient(90deg, #1976D2, #42A5F5);
+    }
+
+    .security-card:nth-child(3)::before {
+      background: linear-gradient(90deg, #7B1FA2, #BA68C8);
+    }
+
+    .security-card:hover {
+      box-shadow: var(--shadow-md);
+      border-color: var(--border-hover);
+      transform: translateY(-3px);
+    }
+
+    .security-icon-wrap {
+      width: 56px;
+      height: 56px;
+      border-radius: var(--radius-md);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 26px;
+      margin-bottom: 20px;
+    }
+
+    .security-card:nth-child(1) .security-icon-wrap {
+      background: #F0FDF4;
+    }
+
+    .security-card:nth-child(2) .security-icon-wrap {
+      background: #EFF6FF;
+    }
+
+    .security-card:nth-child(3) .security-icon-wrap {
+      background: #FAF5FF;
+    }
+
+    .security-tag {
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 3px 10px;
+      border-radius: 20px;
+      display: inline-block;
+      margin-bottom: 12px;
+    }
+
+    .security-card:nth-child(1) .security-tag {
+      background: #F0FDF4;
+      color: #166534;
+      border: 1px solid #86EFAC;
+    }
+
+    .security-card:nth-child(2) .security-tag {
+      background: #EFF6FF;
+      color: #1e40af;
+      border: 1px solid #93C5FD;
+    }
+
+    .security-card:nth-child(3) .security-tag {
+      background: #FAF5FF;
+      color: #6b21a8;
+      border: 1px solid #D8B4FE;
+    }
+
+    .security-name {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 10px;
+    }
+
+    .security-desc {
+      font-size: 0.875rem;
+      color: var(--text-muted);
+      line-height: 1.65;
+      margin-bottom: 16px;
+    }
+
+    .security-badge {
+      display: inline-block;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      font-size: 0.72rem;
+      font-weight: 500;
+      padding: 4px 12px;
+      border-radius: 6px;
+      font-family: 'Courier New', monospace;
+    }
+
+    /* ===================== PIPELINE / WORKFLOW ===================== */
+    .pipeline-section {
+      overflow: hidden;
+    }
+
+    .pipeline-steps {
+      display: flex;
+      align-items: center;
+      gap: 0;
+      overflow-x: auto;
+      padding-bottom: 8px;
+    }
+
+    .pipe-step {
+      flex: 1;
+      min-width: 150px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      padding: 22px 18px;
+      text-align: center;
+      position: relative;
+      transition: var(--transition);
+    }
+
+    .pipe-step:first-child {
+      border-radius: var(--radius-md) 0 0 var(--radius-md);
+    }
+
+    .pipe-step:last-child {
+      border-radius: 0 var(--radius-md) var(--radius-md) 0;
+    }
+
+    .pipe-step+.pipe-step {
+      border-left: none;
+    }
+
+    .pipe-step:hover {
+      background: #F0FDF4;
+      z-index: 1;
+    }
+
+    .pipe-arrow {
+      position: absolute;
+      right: -18px;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 36px;
+      height: 36px;
+      background: var(--bg);
+      border: 1.5px solid var(--border);
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      z-index: 2;
+      color: var(--primary);
+      font-size: 14px;
+      font-weight: 700;
+    }
+
+    .pipe-step:last-child .pipe-arrow {
+      display: none;
+    }
+
+    .pipe-number {
+      font-family: 'Poppins', sans-serif;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--primary);
+      background: #F0FDF4;
+      border: 1px solid rgba(46, 125, 50, 0.2);
+      width: 22px;
+      height: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 10px;
+    }
+
+    .pipe-icon {
+      font-size: 1.6rem;
+      margin-bottom: 8px;
+    }
+
+    .pipe-title {
+      font-size: 0.78rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 4px;
+    }
+
+    .pipe-desc {
+      font-size: 0.72rem;
+      color: var(--text-muted);
+      line-height: 1.4;
+    }
+
+    /* ===================== PORTAL GRID ===================== */
+    .portals-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 28px;
+      align-items: stretch;
+    }
+
+    /* ===================== PORTAL NAV CARDS ===================== */
+    .portal-nav-card {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      text-decoration: none;
+      background: var(--card);
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px 28px;
+      box-shadow: var(--shadow-sm);
+      transition: all 0.3s ease;
+      position: relative;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    .portal-nav-card::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0;
+      height: 3px;
+      border-radius: var(--radius-lg) var(--radius-lg) 0 0;
+    }
+    .portal-nav-card.green-card::before {
+      background: linear-gradient(90deg, #2E7D32, #4CAF50);
+    }
+    .portal-nav-card.blue-card::before {
+      background: linear-gradient(90deg, #1976D2, #42A5F5);
+    }
+    .portal-nav-card:hover {
+      transform: translateY(-4px);
+      box-shadow: var(--shadow-lg);
+      border-color: var(--border-hover);
+    }
+    .portal-nav-card.green-card:hover {
+      border-color: #86EFAC;
+      box-shadow: 0 12px 32px rgba(46, 125, 50, 0.15);
+    }
+    .portal-nav-card.blue-card:hover {
+      border-color: #93C5FD;
+      box-shadow: 0 12px 32px rgba(25, 118, 210, 0.15);
+    }
+    .portal-nav-icon {
+      width: 64px; height: 64px;
+      border-radius: var(--radius-md);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 30px; flex-shrink: 0;
+    }
+    .portal-nav-icon.green-icon {
+      background: linear-gradient(135deg, #F0FDF4, #DCFCE7);
+      border: 1px solid #BBF7D0;
+    }
+    .portal-nav-icon.blue-icon {
+      background: linear-gradient(135deg, #EFF6FF, #DBEAFE);
+      border: 1px solid #BFDBFE;
+    }
+    .portal-nav-content { flex: 1; }
+    .portal-nav-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.2rem;
+      font-weight: 700;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+    .portal-nav-desc {
+      font-size: 0.84rem;
+      color: var(--text-muted);
+      line-height: 1.6;
+      margin-bottom: 14px;
+    }
+    .portal-nav-features {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+    }
+    .portal-feature {
+      font-size: 0.7rem;
+      font-weight: 600;
+      padding: 3px 10px;
+      border-radius: 20px;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text-muted);
+      white-space: nowrap;
+    }
+    .portal-nav-arrow {
+      font-size: 1.5rem;
+      color: var(--text-light);
+      font-weight: 600;
+      flex-shrink: 0;
+      transition: all 0.3s ease;
+    }
+    .portal-nav-card:hover .portal-nav-arrow {
+      transform: translateX(4px);
+      color: var(--text);
+    }
+
+    /* ===================== CARDS ===================== */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 32px;
+      box-shadow: var(--shadow-sm);
+    }
+
+    .card-header {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      margin-bottom: 24px;
+      padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .card-header-icon {
+      width: 44px;
+      height: 44px;
+      border-radius: var(--radius-sm);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 20px;
+      flex-shrink: 0;
+    }
+
+    .card-header-icon.green {
+      background: #F0FDF4;
+    }
+
+    .card-header-icon.blue {
+      background: #EFF6FF;
+    }
+
+    .card-header-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.05rem;
+      font-weight: 700;
+      color: var(--text);
+    }
+
+    .card-header-subtitle {
+      font-size: 0.78rem;
+      color: var(--text-muted);
+      margin-top: 2px;
+    }
+
+    /* ===================== FORM ELEMENTS ===================== */
+    .form-group {
+      margin-bottom: 20px;
+    }
+
+    label {
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 8px;
+    }
+
+    input,
+    textarea,
+    select {
+      width: 100%;
+      background: #FAFAFA;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text);
+      font-family: var(--font-sans);
+      font-size: 0.875rem;
+      padding: 11px 16px;
+      transition: var(--transition);
+      outline: none;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+
+    input:focus,
+    textarea:focus,
+    select:focus {
+      border-color: var(--accent);
+      background: #fff;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.09);
+    }
+
+    input::placeholder,
+    textarea::placeholder {
+      color: var(--text-light);
+    }
+
+    textarea {
+      resize: vertical;
+      min-height: 110px;
+      line-height: 1.6;
+    }
+
+    select {
+      background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 20 20' fill='%23718096'%3E%3Cpath fill-rule='evenodd' d='M5.293 7.293a1 1 0 011.414 0L10 10.586l3.293-3.293a1 1 0 111.414 1.414l-4 4a1 1 0 01-1.414 0l-4-4a1 1 0 010-1.414z' clip-rule='evenodd'/%3E%3C/svg%3E");
+      background-repeat: no-repeat;
+      background-position: right 12px center;
+      background-size: 18px;
+      padding-right: 40px;
+    }
+
+    /* ===================== PROCESSING LOG ===================== */
+    .process-log {
+      background: #F8FAFC;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 18px;
+      margin-top: 20px;
+      display: none;
+    }
+
+    .process-log-header {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 14px;
+      padding-bottom: 12px;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .log-dot {
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+    }
+
+    .log-dot.red {
+      background: #F87171;
+    }
+
+    .log-dot.amber {
+      background: #FBBF24;
+    }
+
+    .log-dot.green {
+      background: #4ADE80;
+    }
+
+    .log-title {
+      font-size: 0.7rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      margin-left: 4px;
+    }
+
+    .log-line {
+      display: flex;
+      gap: 8px;
+      padding: 5px 0;
+      font-size: 0.8rem;
+      border-bottom: 1px solid #EDF2F7;
+      align-items: flex-start;
+    }
+
+    .log-line:last-child {
+      border-bottom: none;
+    }
+
+    .log-label {
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      color: var(--primary);
+      font-weight: 700;
+      white-space: nowrap;
+      flex-shrink: 0;
+      padding-top: 1px;
+    }
+
+    .log-value {
+      color: var(--text);
+      word-break: break-all;
+      line-height: 1.5;
+    }
+
+    .log-success {
+      color: #16A34A;
+      font-weight: 600;
+    }
+
+    .log-warn {
+      color: #D97706;
+      font-family: 'Courier New', monospace;
+      font-size: 0.72rem;
+      word-break: break-all;
+    }
+
+    .log-error {
+      color: #DC2626;
+      font-weight: 600;
+    }
+
+    /* ===================== RESULT CARD ===================== */
+    .result-card {
+      background: #FAFAFA;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px;
+      margin-top: 18px;
+      display: none;
+    }
+
+    .result-card.visible {
+      display: block;
+    }
+
+    .result-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 16px;
+      padding: 10px 0;
+      border-bottom: 1px solid var(--border);
+    }
+
+    .result-row:last-child {
+      border-bottom: none;
+    }
+
+    .result-label {
+      font-size: 0.75rem;
+      font-weight: 600;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+      flex-shrink: 0;
+      min-width: 130px;
+      padding-top: 2px;
+    }
+
+    .result-value {
+      font-size: 0.875rem;
+      color: var(--text);
+      word-break: break-all;
+      text-align: right;
+      line-height: 1.5;
+    }
+
+    /* ===================== STATUS BADGES ===================== */
+    .status {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      padding: 4px 12px;
+      border-radius: 20px;
+    }
+
+    .status.ok {
+      background: var(--success-bg);
+      color: var(--success-text);
+      border: 1px solid var(--success-bdr);
+    }
+
+    .status.fail {
+      background: var(--error-bg);
+      color: var(--error-text);
+      border: 1px solid var(--error-bdr);
+    }
+
+    /* ===================== STEPS LIST ===================== */
+    .steps-list {
+      list-style: none;
+      margin-top: 16px;
+      padding-top: 12px;
+      border-top: 1px solid var(--border);
+    }
+
+    .steps-list li {
+      display: flex;
+      align-items: flex-start;
+      gap: 10px;
+      padding: 7px 0;
+      border-bottom: 1px solid #EDF2F7;
+      font-size: 0.8rem;
+      color: var(--text-muted);
+      animation: fadeSlideIn 0.3s ease forwards;
+      opacity: 0;
+    }
+
+    .steps-list li:last-child {
+      border-bottom: none;
+    }
+
+    .steps-list li:nth-child(1) {
+      animation-delay: 0.05s;
+    }
+
+    .steps-list li:nth-child(2) {
+      animation-delay: 0.12s;
+    }
+
+    .steps-list li:nth-child(3) {
+      animation-delay: 0.19s;
+    }
+
+    .steps-list li:nth-child(4) {
+      animation-delay: 0.26s;
+    }
+
+    .steps-list li:nth-child(5) {
+      animation-delay: 0.33s;
+    }
+
+    .step-num {
+      font-size: 0.7rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: #EFF6FF;
+      width: 22px;
+      height: 22px;
+      min-width: 22px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-top: 1px;
+    }
+
+    @keyframes fadeSlideIn {
+      from {
+        opacity: 0;
+        transform: translateX(-8px);
+      }
+
+      to {
+        opacity: 1;
+        transform: translateX(0);
+      }
+    }
+
+    /* ===================== RECORDS TABLE ===================== */
+    .records-section {
+      margin-top: 28px;
+      padding-top: 24px;
+      border-top: 1px solid var(--border);
+    }
+
+    .records-section-title {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--text-muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 16px;
+    }
+
+    .records-table {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 0.82rem;
+    }
+
+    .records-table th {
+      text-align: left;
+      padding: 9px 14px;
+      color: var(--text-muted);
+      font-size: 0.7rem;
+      font-weight: 700;
+      letter-spacing: 0.07em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+
+    .records-table th:first-child {
+      border-radius: var(--radius-sm) 0 0 0;
+    }
+
+    .records-table th:last-child {
+      border-radius: 0 var(--radius-sm) 0 0;
+    }
+
+    .records-table td {
+      padding: 10px 14px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+
+    .records-table tr:last-child td {
+      border-bottom: none;
+    }
+
+    .records-table tbody tr:hover td {
+      background: #F8FAFC;
+    }
+
+    .decrypt-btn {
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      padding: 5px 14px;
+      border-radius: 6px;
+      font-size: 0.72rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: var(--transition);
+      letter-spacing: 0.02em;
+    }
+
+    .decrypt-btn:hover {
+      background: var(--accent-hover);
+    }
+    .delete-btn {
+      background: #FEF2F2;
+      color: #DC2626;
+      border: 1px solid #FECACA;
+      border-radius: 6px;
+      padding: 5px 10px;
+      font-size: 0.78rem;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.2s;
+      white-space: nowrap;
+    }
+    .delete-btn:hover { background:#DC2626; color:#fff; }
+    .delete-btn:disabled { opacity:0.5; cursor:not-allowed; }
+    
+
+    /* ===================== SPINNER ===================== */
+    .spinner {
+      display: inline-block;
+      width: 14px;
+      height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff;
+      border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+
+    @keyframes spin {
+      to {
+        transform: rotate(360deg);
+      }
+    }
+
+    /* ===================== NOTIFICATION ===================== */
+    #notification {
+      position: fixed;
+      top: 24px;
+      right: 24px;
+      z-index: 1000;
+      background: var(--card);
+      border-left: 4px solid var(--primary);
+      color: var(--text);
+      font-size: 0.875rem;
+      font-weight: 500;
+      padding: 14px 20px;
+      border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg);
+      transform: translateX(200%);
+      transition: transform 0.3s ease;
+      max-width: 340px;
+    }
+
+    #notification.show {
+      transform: translateX(0);
+    }
+
+    #notification.error {
+      border-left-color: #DC2626;
+    }
+
+    /* ===================== DIVIDER ===================== */
+    .divider {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 0;
+    }
+
+    /* ===================== FOOTER ===================== */
+    footer {
+      background: #1A202C;
+      color: #A0AEC0;
+      padding: 56px 40px 32px;
+    }
+
+    .footer-grid {
+      max-width: 1200px;
+      margin: 0 auto;
+      display: grid;
+      grid-template-columns: 1.8fr 1fr 1fr;
+      gap: 48px;
+      margin-bottom: 48px;
+    }
+
+    .footer-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 14px;
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.15rem;
+      font-weight: 700;
+      color: #fff;
+    }
+
+    .footer-logo-icon {
+      width: 34px;
+      height: 34px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 17px;
+    }
+
+    .footer-desc {
+      font-size: 0.875rem;
+      line-height: 1.7;
+      color: #718096;
+      max-width: 280px;
+    }
+
+    .footer-heading {
+      font-size: 0.75rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.1em;
+      color: #fff;
+      margin-bottom: 16px;
+    }
+
+    .footer-list {
+      list-style: none;
+    }
+
+    .footer-list li {
+      margin-bottom: 8px;
+      font-size: 0.875rem;
+      color: #718096;
+    }
+
+    .footer-list li span {
+      display: inline-block;
+      background: #2D3748;
+      color: #A0AEC0;
+      font-size: 0.68rem;
+      padding: 2px 8px;
+      border-radius: 4px;
+      font-family: 'Courier New', monospace;
+    }
+
+    .footer-bottom {
+      max-width: 1200px;
+      margin: 0 auto;
+      padding-top: 24px;
+      border-top: 1px solid #2D3748;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      flex-wrap: wrap;
+      gap: 12px;
+      font-size: 0.8rem;
+      color: #4A5568;
+    }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 900px) {
+      .security-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .portals-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr 1fr;
+      }
+    }
+
+    @media (max-width: 768px) {
+      .navbar {
+        padding: 0 20px;
+      }
+
+      .nav-links {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 64px;
+        left: 0;
+        right: 0;
+        background: #fff;
+        border-bottom: 1px solid var(--border);
+        padding: 12px 20px;
+        box-shadow: var(--shadow-md);
+        gap: 2px;
+      }
+
+      .nav-links.open {
+        display: flex;
+      }
+
+      .nav-links a {
+        padding: 10px 14px;
+        display: block;
+        border-radius: var(--radius-sm);
+      }
+
+      .nav-hamburger {
+        display: flex;
+      }
+
+      .hero {
+        padding: 60px 20px 56px;
+      }
+
+      .container {
+        padding: 0 20px;
+      }
+
+      .section {
+        padding: 52px 0;
+      }
+
+      .card {
+        padding: 24px 20px;
+      }
+
+      .pipeline-steps {
+        flex-direction: column;
+        align-items: stretch;
+      }
+
+      .pipe-step {
+        border-radius: var(--radius-sm) !important;
+        border: 1px solid var(--border) !important;
+        margin-bottom: 8px;
+      }
+
+      .pipe-arrow {
+        position: static;
+        transform: none;
+        width: auto;
+        height: auto;
+        background: none;
+        border: none;
+        border-radius: 0;
+        margin: 0 auto;
+        display: flex;
+        justify-content: center;
+        color: var(--text-muted);
+        padding: 4px 0;
+        font-size: 12px;
+      }
+
+      .footer-grid {
+        grid-template-columns: 1fr;
+        gap: 32px;
+      }
+    }
+
+    @media (max-width: 480px) {
+      .hero h1 {
+        font-size: 1.8rem;
+      }
+
+      .hero-actions {
+        flex-direction: column;
+        align-items: center;
+      }
+
+      .hero-stats {
+        gap: 24px;
+      }
+
+      .footer-bottom {
+        flex-direction: column;
+        text-align: center;
+      }
+
+      .portals-grid {
+        gap: 20px;
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="navbar">
+    <a href="#" class="nav-logo">
+      <div class="nav-logo-icon">🌾</div>
+      Agro<span>Secure</span>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="#how-it-works">How it Works</a></li>
+      <li><a href="#security">Security</a></li>
+      <li><a href="/farmer">Farmer Portal</a></li>
+      <li><a href="/department">Department Portal</a></li>
+      <li><a href="#about">About</a></li>
+      <li><a href="/logout" class="nav-cta" style="background:var(--primary)!important;color:#fff!important;"
+          onclick="return confirm('Are you sure you want to logout?')">🚪 Logout</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ===================== HERO ===================== -->
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <!-- Left: text -->
+      <div class="hero-text">
+        <h1>Secure Crop Data<br><span class="highlight">Sharing System</span></h1>
+        <p class="hero-subtitle">
+          A cryptography-based platform enabling farmers and agricultural
+          departments to securely exchange crop information with full
+          data integrity and authentication.
+        </p>
+        <div class="hero-actions">
+          <a href="#farmer-portal" class="btn btn-green">
+            👨‍🌾 Farmer Portal
+          </a>
+          <a href="#dept-portal" class="btn btn-outline">
+            🏛️ Department Portal
+          </a>
+        </div>
+      </div>
+      <!-- Right: animated visual -->
+      <div class="hero-anim-wrap">
+        <div class="float-dot"></div>
+        <div class="float-dot"></div>
+        <div class="float-dot"></div>
+        <div class="float-dot"></div>
+        <div class="float-dot"></div>
+        <div class="hero-ring-outer"></div>
+        <div class="hero-ring-inner"></div>
+        <div class="hero-glow"></div>
+        <div class="hero-shield">🛡️</div>
+        <div class="orbit-icon orbit-1">🌾</div>
+        <div class="orbit-icon orbit-2">🔒</div>
+        <div class="orbit-icon orbit-3">📊</div>
+        <div class="orbit-icon orbit-4">✅</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== SECURITY CARDS ===================== -->
+  <section class="section section-alt" id="security">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Cryptography Stack</div>
+        <h2 class="section-title">Three-Layer Security Model</h2>
+        <p class="section-desc">Every piece of crop data is protected by three independent cryptographic layers working
+          together.</p>
+      </div>
+      <div class="security-grid">
+        <div class="security-card">
+          <div class="security-icon-wrap">🔒</div>
+          <div class="security-tag">Confidentiality</div>
+          <div class="security-name">AES Encryption</div>
+          <p class="security-desc">Advanced Encryption Standard encrypts crop data so only authorized officers with the
+            correct key can read it. Uses CBC mode for maximum security.</p>
+          <span class="security-badge">CBC Mode · 16-byte key</span>
+        </div>
+        <div class="security-card">
+          <div class="security-icon-wrap">🔑</div>
+          <div class="security-tag">Integrity</div>
+          <div class="security-name">SHA-256 Hashing</div>
+          <p class="security-desc">Cryptographic hash detects any tampering. If even a single character changes, the
+            hash value will be completely different — instantly alerting to tampering.</p>
+          <span class="security-badge">256-bit digest · One-way</span>
+        </div>
+        <div class="security-card">
+          <div class="security-icon-wrap">✍️</div>
+          <div class="security-tag">Authentication</div>
+          <div class="security-name">RSA Authentication</div>
+          <p class="security-desc">Digital signatures prove data originated from the authentic farmer. The department
+            verifies identity using the public key before accessing any record.</p>
+          <span class="security-badge">PKCS#1 v1.5 · 2048-bit</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===================== WORKFLOW PIPELINE ===================== -->
+  <section class="section pipeline-section" id="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">How It Works</div>
+        <h2 class="section-title">End-to-End Data Flow</h2>
+        <p class="section-desc">From farm input to department verification, every step is cryptographically secured.</p>
+      </div>
+      <div class="pipeline-steps">
+        <div class="pipe-step">
+          <div class="pipe-number">1</div>
+          <div class="pipe-icon">👨‍🌾</div>
+          <div class="pipe-title">Farmer Input</div>
+          <div class="pipe-desc">Farmer enters crop data</div>
+          <div class="pipe-arrow">→</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-number">2</div>
+          <div class="pipe-icon">🔑</div>
+          <div class="pipe-title">SHA-256 Hash</div>
+          <div class="pipe-desc">Integrity stamp applied</div>
+          <div class="pipe-arrow">→</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-number">3</div>
+          <div class="pipe-icon">🔒</div>
+          <div class="pipe-title">AES Encrypt</div>
+          <div class="pipe-desc">Data scrambled securely</div>
+          <div class="pipe-arrow">→</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-number">4</div>
+          <div class="pipe-icon">✍️</div>
+          <div class="pipe-title">RSA Signature</div>
+          <div class="pipe-desc">Identity proven digitally</div>
+          <div class="pipe-arrow">→</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-number">5</div>
+          <div class="pipe-icon">🗄️</div>
+          <div class="pipe-title">Secure Database</div>
+          <div class="pipe-desc">Safely stored encrypted</div>
+          <div class="pipe-arrow">→</div>
+        </div>
+        <div class="pipe-step">
+          <div class="pipe-number">6</div>
+          <div class="pipe-icon">🏛️</div>
+          <div class="pipe-title">Dept. Verification</div>
+          <div class="pipe-desc">Decrypt &amp; verify identity</div>
+          <div class="pipe-arrow"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <hr class="divider">
+
+  <!-- ===================== PORTALS ===================== -->
+  <section class="section" id="farmer-portal">
+    <div class="container">
+      <div class="section-header">
+        <div class="section-tag">Portals</div>
+        <h2 class="section-title">Access Secure Portals</h2>
+        <p class="section-desc">Choose your portal to securely submit or retrieve crop data through dedicated authenticated interfaces.</p>
+      </div>
+      <div class="portals-grid">
+
+        <!-- Farmer Portal Card -->
+        <a href="/farmer" class="portal-nav-card green-card" id="farmer-portal-link">
+          <div class="portal-nav-icon green-icon">👨‍🌾</div>
+          <div class="portal-nav-content">
+            <h3 class="portal-nav-title">Farmer Portal</h3>
+            <p class="portal-nav-desc">Upload and encrypt your crop data securely using AES-128 encryption with SHA-256 integrity hashing and RSA-2048 digital signatures.</p>
+            <div class="portal-nav-features">
+              <span class="portal-feature">🔒 AES Encrypt</span>
+              <span class="portal-feature">🔑 SHA-256 Hash</span>
+              <span class="portal-feature">✍️ RSA Sign</span>
+            </div>
+          </div>
+          <div class="portal-nav-arrow">→</div>
+        </a>
+
+        <!-- Department Portal Card -->
+        <a href="/department" class="portal-nav-card blue-card" id="dept-portal">
+          <div class="portal-nav-icon blue-icon">🏛️</div>
+          <div class="portal-nav-content">
+            <h3 class="portal-nav-title">Department Portal</h3>
+            <p class="portal-nav-desc">Retrieve, decrypt, and verify encrypted crop records with full integrity verification and digital signature authentication.</p>
+            <div class="portal-nav-features">
+              <span class="portal-feature">🔓 Decrypt</span>
+              <span class="portal-feature">✅ Verify Integrity</span>
+              <span class="portal-feature">📋 View Records</span>
+            </div>
+          </div>
+          <div class="portal-nav-arrow">→</div>
+        </a>
+
+      </div><!-- end portals-grid -->
+    </div>
+  </section>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer id="about">
+    <div class="footer-grid">
+      <div>
+        <div class="footer-logo">
+          <div class="footer-logo-icon">🌾</div>
+          AgroSecure
+        </div>
+        <p class="footer-desc">
+          A cryptography-based secure crop data sharing platform built to protect agricultural data with military-grade
+          encryption, ensuring integrity and authenticity.
+        </p>
+      </div>
+      <div>
+        <div class="footer-heading">Technologies</div>
+        <ul class="footer-list">
+          <li><span>AES-128</span> &nbsp;Encryption (CBC)</li>
+          <li><span>SHA-256</span> &nbsp;Integrity Hash</li>
+          <li><span>RSA-2048</span> &nbsp;Digital Signature</li>
+          <li><span>Flask</span> &nbsp;Python Backend</li>
+          <li><span>SQLite</span> &nbsp;Secure Database</li>
+        </ul>
+      </div>
+      <div>
+        <div class="footer-heading">Navigation</div>
+        <ul class="footer-list">
+          <li><a href="#home" style="color:#718096;text-decoration:none;">Home</a></li>
+          <li><a href="#how-it-works" style="color:#718096;text-decoration:none;">How it Works</a></li>
+          <li><a href="#security" style="color:#718096;text-decoration:none;">Security Model</a></li>
+          <li><a href="#farmer-portal" style="color:#718096;text-decoration:none;">Farmer Portal</a></li>
+          <li><a href="#dept-portal" style="color:#718096;text-decoration:none;">Department Portal</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div>© 2024 AgroSecure — Secure Crop Data Sharing System</div>
+      <div>Built with Python · Flask · Cryptography</div>
+    </div>
+  </footer>
+
+  <div id="notification"></div>
+
+  <script>
+    /* ---- NAVBAR toggle ---- */
+    function toggleNav() {
+      document.getElementById('nav-links').classList.toggle('open');
+    }
+    /* Close nav on link click */
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.addEventListener('click', () => document.getElementById('nav-links').classList.remove('open'));
+    });
+  </script>
+</body>
+
+</html>

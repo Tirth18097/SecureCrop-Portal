@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Login — AgroSecure</title>
+  <meta name="description" content="Admin authentication required to access the Department Portal.">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    :root {
+      --primary: #2E7D32;
+      --primary-dark: #1B5E20;
+      --secondary: #4CAF50;
+      --accent: #1976D2;
+      --accent-hover: #1565C0;
+      --bg: #F5F7FA;
+      --surface: #FFFFFF;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --text: #1A202C;
+      --text-muted: #718096;
+      --text-light: #A0AEC0;
+      --error-bg: #FEF2F2;
+      --error-text: #991B1B;
+      --error-bdr: #FECACA;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.10), 0 4px 10px rgba(0, 0, 0, 0.05);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --font-sans: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      --transition: all 0.2s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 40%, #E0F2FE 100%);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 24px;
+    }
+
+    /* ===================== BACK LINK ===================== */
+    .back-link {
+      position: fixed;
+      top: 24px; left: 24px;
+      display: inline-flex; align-items: center; gap: 6px;
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.85rem; font-weight: 500;
+      padding: 8px 16px; border-radius: var(--radius-sm);
+      background: rgba(255,255,255,0.7);
+      backdrop-filter: blur(8px);
+      border: 1px solid var(--border);
+      transition: var(--transition);
+    }
+    .back-link:hover { color: var(--accent); background: rgba(255,255,255,0.95); }
+
+    /* ===================== LOGIN CARD ===================== */
+    .login-wrapper {
+      width: 100%;
+      max-width: 420px;
+      animation: fadeUp 0.5s ease;
+    }
+    @keyframes fadeUp {
+      from { opacity: 0; transform: translateY(20px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    .login-icon {
+      width: 80px; height: 80px;
+      background: linear-gradient(135deg, var(--accent), #42A5F5);
+      border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 38px; margin: 0 auto 24px;
+      box-shadow: 0 8px 28px rgba(25, 118, 210, 0.3);
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+
+    .login-card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 40px 36px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+    .login-card h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.5rem; font-weight: 800;
+      color: var(--text); margin-bottom: 6px;
+    }
+    .login-card h1 .highlight { color: var(--accent); }
+    .login-card .subtitle {
+      color: var(--text-muted); font-size: 0.88rem;
+      margin-bottom: 28px; line-height: 1.6;
+    }
+
+    .admin-badge {
+      display: inline-flex; align-items: center; gap: 6px;
+      background: #EFF6FF; border: 1px solid #BFDBFE;
+      color: var(--accent); font-size: 0.72rem;
+      font-weight: 700; letter-spacing: 0.08em;
+      text-transform: uppercase;
+      padding: 5px 14px; border-radius: 20px;
+      margin-bottom: 20px;
+    }
+
+    /* ===================== FORM ===================== */
+    .form-group {
+      margin-bottom: 20px; text-align: left;
+    }
+    label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: var(--text); margin-bottom: 8px;
+    }
+    input {
+      width: 100%; background: #FAFAFA;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text); font-family: var(--font-sans);
+      font-size: 0.9rem; padding: 12px 16px;
+      transition: var(--transition); outline: none;
+    }
+    input:focus {
+      border-color: var(--accent); background: #fff;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.09);
+    }
+    input::placeholder { color: var(--text-light); }
+
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border-radius: var(--radius-sm);
+      font-family: var(--font-sans); font-size: 0.95rem;
+      font-weight: 600; cursor: pointer; border: none;
+      transition: var(--transition); text-decoration: none;
+      white-space: nowrap; width: 100%; justify-content: center;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover); transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.4);
+    }
+    .btn:disabled {
+      opacity: 0.55; cursor: not-allowed;
+      transform: none !important; box-shadow: none !important;
+    }
+
+    /* ===================== ERROR ===================== */
+    .error-msg {
+      background: var(--error-bg);
+      border: 1px solid var(--error-bdr);
+      color: var(--error-text);
+      font-size: 0.82rem; font-weight: 500;
+      padding: 10px 16px;
+      border-radius: var(--radius-sm);
+      margin-bottom: 18px;
+      display: none;
+      animation: shake 0.4s ease;
+    }
+    .error-msg.visible { display: block; }
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      25% { transform: translateX(-6px); }
+      75% { transform: translateX(6px); }
+    }
+
+    /* ===================== FOOTER ===================== */
+    .login-footer {
+      text-align: center; margin-top: 20px;
+      font-size: 0.78rem; color: var(--text-light);
+    }
+    .login-footer a {
+      color: var(--text-muted); text-decoration: none;
+    }
+    .login-footer a:hover { color: var(--accent); }
+
+    /* ===================== DECORATIVE ===================== */
+    .bg-dot {
+      position: fixed; border-radius: 50%;
+      opacity: 0.4; animation: bgFloat 5s ease-in-out infinite;
+    }
+    .bg-dot:nth-child(1) { width: 12px; height: 12px; background: rgba(25,118,210,0.3); top: 15%; left: 10%; animation-delay: 0s; }
+    .bg-dot:nth-child(2) { width: 8px; height: 8px; background: rgba(46,125,50,0.3); top: 25%; right: 15%; animation-delay: 1s; }
+    .bg-dot:nth-child(3) { width: 10px; height: 10px; background: rgba(25,118,210,0.2); bottom: 20%; left: 20%; animation-delay: 2s; }
+    .bg-dot:nth-child(4) { width: 6px; height: 6px; background: rgba(46,125,50,0.25); bottom: 30%; right: 10%; animation-delay: 0.5s; }
+    @keyframes bgFloat {
+      0%, 100% { transform: translateY(0) scale(1); }
+      50% { transform: translateY(-18px) scale(1.3); }
+    }
+
+    @media (max-width: 480px) {
+      .login-card { padding: 28px 24px; }
+      .back-link { top: 12px; left: 12px; font-size: 0.78rem; }
+    }
+  </style>
+</head>
+
+<body>
+  <!-- Decorative dots -->
+  <div class="bg-dot"></div>
+  <div class="bg-dot"></div>
+  <div class="bg-dot"></div>
+  <div class="bg-dot"></div>
+
+  <a href="/" class="back-link">← Back to Home</a>
+
+  <div class="login-wrapper">
+    <div class="login-icon">🏛️</div>
+    <div class="login-card">
+      <div class="admin-badge">🔐 Admin Access Only</div>
+      <h1>Department <span class="highlight">Portal</span></h1>
+      <p class="subtitle">This portal is restricted to authorized department administrators. Please enter your credentials to continue.</p>
+
+      <div class="error-msg" id="error-msg">❌ Invalid username or password</div>
+
+      <form id="admin-form" onsubmit="handleLogin(event)">
+        <div class="form-group">
+          <label for="username">Username</label>
+          <input type="text" id="username" placeholder="Enter admin username" autocomplete="username" required>
+        </div>
+        <div class="form-group">
+          <label for="password">Password</label>
+          <input type="password" id="password" placeholder="Enter password" autocomplete="current-password" required>
+        </div>
+        <button type="submit" class="btn btn-primary" id="login-btn">
+          🔓 Authenticate & Enter
+        </button>
+      </form>
+
+      <div class="login-footer">
+        <p>© 2024 AgroSecure · <a href="/">Home</a> · <a href="/farmer">Farmer Portal</a></p>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    async function handleLogin(e) {
+      e.preventDefault();
+      const username = document.getElementById('username').value.trim();
+      const password = document.getElementById('password').value;
+      const errEl = document.getElementById('error-msg');
+      const btn = document.getElementById('login-btn');
+
+      errEl.classList.remove('visible');
+      btn.disabled = true;
+      btn.textContent = 'Verifying…';
+
+      try {
+        const res = await fetch('/api/admin-login', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ username, password })
+        });
+        const json = await res.json();
+
+        if (json.success) {
+          window.location.href = '/department';
+        } else {
+          errEl.textContent = '❌ ' + (json.error || 'Invalid username or password');
+          errEl.classList.add('visible');
+        }
+      } catch (err) {
+        errEl.textContent = '❌ Connection error. Please try again.';
+        errEl.classList.add('visible');
+      } finally {
+        btn.disabled = false;
+        btn.textContent = '🔓 Authenticate & Enter';
+      }
+    }
+  </script>
+</body>
+
+</html>

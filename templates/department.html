@@ -1,0 +1,647 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Department Portal — AgroSecure</title>
+  <meta name="description"
+    content="Retrieve, decrypt, and verify crop records through the AgroSecure Department Portal with full integrity and signature verification.">
+  <link
+    href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&display=swap"
+    rel="stylesheet">
+  <style>
+    /* ===================== CSS VARIABLES ===================== */
+    :root {
+      --primary: #2E7D32;
+      --primary-dark: #1B5E20;
+      --secondary: #4CAF50;
+      --accent: #1976D2;
+      --accent-hover: #1565C0;
+      --bg: #F5F7FA;
+      --surface: #FFFFFF;
+      --card: #FFFFFF;
+      --border: #E2E8F0;
+      --border-hover: #CBD5E0;
+      --text: #1A202C;
+      --text-muted: #718096;
+      --text-light: #A0AEC0;
+      --success-bg: #F0FDF4;
+      --success-text: #166534;
+      --success-bdr: #86EFAC;
+      --error-bg: #FEF2F2;
+      --error-text: #991B1B;
+      --error-bdr: #FECACA;
+      --shadow-sm: 0 1px 3px rgba(0, 0, 0, 0.06), 0 1px 2px rgba(0, 0, 0, 0.04);
+      --shadow-md: 0 4px 12px rgba(0, 0, 0, 0.08), 0 2px 4px rgba(0, 0, 0, 0.04);
+      --shadow-lg: 0 10px 30px rgba(0, 0, 0, 0.10), 0 4px 10px rgba(0, 0, 0, 0.05);
+      --radius-sm: 8px;
+      --radius-md: 12px;
+      --radius-lg: 16px;
+      --radius-xl: 24px;
+      --font-sans: 'Inter', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+      --transition: all 0.2s ease;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    html { scroll-behavior: smooth; }
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--font-sans);
+      min-height: 100vh;
+      overflow-x: hidden;
+      line-height: 1.6;
+      font-size: 15px;
+    }
+
+    /* ===================== NAVBAR ===================== */
+    .navbar {
+      position: sticky; top: 0; z-index: 100;
+      background: rgba(255, 255, 255, 0.95);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-bottom: 1px solid var(--border);
+      padding: 0 40px; height: 64px;
+      display: flex; align-items: center; justify-content: space-between;
+      box-shadow: var(--shadow-sm);
+    }
+    .nav-logo {
+      display: flex; align-items: center; gap: 10px;
+      text-decoration: none; font-family: 'Poppins', sans-serif;
+      font-weight: 700; font-size: 1.25rem; color: var(--primary);
+      letter-spacing: -0.02em;
+    }
+    .nav-logo-icon {
+      width: 36px; height: 36px;
+      background: linear-gradient(135deg, var(--primary), var(--secondary));
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 18px;
+      box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+    }
+    .nav-logo span { color: var(--text); font-weight: 600; }
+    .nav-links {
+      display: flex; align-items: center; gap: 4px; list-style: none;
+    }
+    .nav-links a {
+      color: var(--text-muted); text-decoration: none;
+      font-size: 0.875rem; font-weight: 500;
+      padding: 7px 14px; border-radius: var(--radius-sm);
+      transition: var(--transition);
+    }
+    .nav-links a:hover { color: var(--primary); background: #F0FDF4; }
+    .nav-links a.active { color: var(--accent); background: #EFF6FF; font-weight: 600; }
+    .nav-cta {
+      background: var(--accent) !important; color: #fff !important;
+      padding: 7px 18px !important; border-radius: var(--radius-sm) !important;
+      font-weight: 600 !important;
+    }
+    .nav-cta:hover { background: var(--accent-hover) !important; color: #fff !important; }
+    .nav-hamburger {
+      display: none; flex-direction: column; gap: 5px;
+      background: none; border: none; cursor: pointer; padding: 4px;
+    }
+    .nav-hamburger span {
+      display: block; width: 22px; height: 2px;
+      background: var(--text); border-radius: 2px; transition: var(--transition);
+    }
+
+    /* ===================== PAGE HERO ===================== */
+    .page-hero {
+      background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 40%, #E0F2FE 100%);
+      padding: 48px 40px 40px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .page-hero::before {
+      content: '';
+      position: absolute; top: -80px; right: -80px;
+      width: 300px; height: 300px;
+      background: radial-gradient(circle, rgba(25,118,210,0.12) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .page-hero::after {
+      content: '';
+      position: absolute; bottom: -60px; left: -60px;
+      width: 250px; height: 250px;
+      background: radial-gradient(circle, rgba(25,118,210,0.08) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .page-hero-icon {
+      width: 72px; height: 72px;
+      background: linear-gradient(135deg, var(--accent), #42A5F5);
+      border-radius: var(--radius-lg);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 34px; margin: 0 auto 20px;
+      box-shadow: 0 8px 24px rgba(25, 118, 210, 0.3);
+      animation: floatIcon 3s ease-in-out infinite;
+    }
+    @keyframes floatIcon {
+      0%, 100% { transform: translateY(0); }
+      50% { transform: translateY(-8px); }
+    }
+    .page-hero h1 {
+      font-family: 'Poppins', sans-serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 800; color: var(--text);
+      letter-spacing: -0.02em; margin-bottom: 8px;
+    }
+    .page-hero h1 .highlight { color: var(--accent); }
+    .page-hero p {
+      color: var(--text-muted); font-size: 0.95rem;
+      max-width: 480px; margin: 0 auto; line-height: 1.7;
+    }
+
+    /* ===================== MAIN CONTENT ===================== */
+    .portal-content {
+      max-width: 820px;
+      margin: -32px auto 60px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 2;
+    }
+
+    /* ===================== CARD ===================== */
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      padding: 36px 32px;
+      box-shadow: var(--shadow-md);
+    }
+    .card + .card { margin-top: 24px; }
+    .card-header {
+      display: flex; align-items: center; gap: 14px;
+      margin-bottom: 28px; padding-bottom: 20px;
+      border-bottom: 1px solid var(--border);
+    }
+    .card-header-icon {
+      width: 48px; height: 48px;
+      border-radius: var(--radius-sm);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 22px; flex-shrink: 0;
+    }
+    .card-header-icon.blue { background: #EFF6FF; }
+    .card-header-title {
+      font-family: 'Poppins', sans-serif;
+      font-size: 1.15rem; font-weight: 700; color: var(--text);
+    }
+    .card-header-subtitle {
+      font-size: 0.8rem; color: var(--text-muted); margin-top: 2px;
+    }
+
+    /* ===================== FORM ===================== */
+    .form-group { margin-bottom: 22px; }
+    label {
+      display: block; font-size: 0.82rem; font-weight: 600;
+      color: var(--text); margin-bottom: 8px;
+    }
+    input {
+      width: 100%; background: #FAFAFA;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-sm);
+      color: var(--text); font-family: var(--font-sans);
+      font-size: 0.875rem; padding: 12px 16px;
+      transition: var(--transition); outline: none;
+      appearance: none; -webkit-appearance: none;
+    }
+    input:focus {
+      border-color: var(--accent); background: #fff;
+      box-shadow: 0 0 0 3px rgba(25, 118, 210, 0.09);
+    }
+    input::placeholder { color: var(--text-light); }
+
+    /* ===================== BUTTONS ===================== */
+    .btn {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 13px 28px; border-radius: var(--radius-sm);
+      font-family: var(--font-sans); font-size: 0.95rem;
+      font-weight: 600; cursor: pointer; border: none;
+      transition: var(--transition); text-decoration: none;
+      white-space: nowrap;
+    }
+    .btn-primary {
+      background: var(--accent); color: #fff;
+      box-shadow: 0 2px 8px rgba(25, 118, 210, 0.3);
+    }
+    .btn-primary:hover {
+      background: var(--accent-hover); transform: translateY(-1px);
+      box-shadow: 0 4px 16px rgba(25, 118, 210, 0.4);
+    }
+    .btn:disabled {
+      opacity: 0.55; cursor: not-allowed;
+      transform: none !important; box-shadow: none !important;
+    }
+    .btn-block { width: 100%; justify-content: center; }
+
+    /* ===================== RESULT CARD ===================== */
+    .result-card {
+      background: #FAFAFA;
+      border: 1.5px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 20px; margin-top: 22px;
+      display: none;
+    }
+    .result-card.visible { display: block; }
+    .result-row {
+      display: flex; justify-content: space-between;
+      align-items: flex-start; gap: 16px;
+      padding: 10px 0; border-bottom: 1px solid var(--border);
+    }
+    .result-row:last-child { border-bottom: none; }
+    .result-label {
+      font-size: 0.75rem; font-weight: 600;
+      color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.06em; flex-shrink: 0;
+      min-width: 130px; padding-top: 2px;
+    }
+    .result-value {
+      font-size: 0.875rem; color: var(--text);
+      word-break: break-all; text-align: right; line-height: 1.5;
+    }
+    .status {
+      display: inline-flex; align-items: center; gap: 5px;
+      font-size: 0.72rem; font-weight: 600;
+      padding: 4px 12px; border-radius: 20px;
+    }
+    .status.ok {
+      background: var(--success-bg); color: var(--success-text);
+      border: 1px solid var(--success-bdr);
+    }
+    .status.fail {
+      background: var(--error-bg); color: var(--error-text);
+      border: 1px solid var(--error-bdr);
+    }
+    .steps-list { list-style: none; margin-top: 16px; padding-top: 12px; border-top: 1px solid var(--border); }
+    .steps-list li {
+      display: flex; align-items: flex-start; gap: 10px;
+      padding: 7px 0; border-bottom: 1px solid #EDF2F7;
+      font-size: 0.8rem; color: var(--text-muted);
+      animation: fadeSlideIn 0.3s ease forwards; opacity: 0;
+    }
+    .steps-list li:last-child { border-bottom: none; }
+    .steps-list li:nth-child(1) { animation-delay: 0.05s; }
+    .steps-list li:nth-child(2) { animation-delay: 0.12s; }
+    .steps-list li:nth-child(3) { animation-delay: 0.19s; }
+    .steps-list li:nth-child(4) { animation-delay: 0.26s; }
+    .steps-list li:nth-child(5) { animation-delay: 0.33s; }
+    .step-num {
+      font-size: 0.7rem; font-weight: 700; color: var(--accent);
+      background: #EFF6FF; width: 22px; height: 22px; min-width: 22px;
+      border-radius: 50%; display: flex; align-items: center;
+      justify-content: center; margin-top: 1px;
+    }
+    @keyframes fadeSlideIn {
+      from { opacity: 0; transform: translateX(-8px); }
+      to { opacity: 1; transform: translateX(0); }
+    }
+
+    /* ===================== RECORDS TABLE ===================== */
+    .records-section-title {
+      font-size: 0.8rem; font-weight: 700;
+      color: var(--text-muted); text-transform: uppercase;
+      letter-spacing: 0.08em; margin-bottom: 16px;
+    }
+    .records-table {
+      width: 100%; border-collapse: collapse; font-size: 0.82rem;
+    }
+    .records-table th {
+      text-align: left; padding: 9px 14px;
+      color: var(--text-muted); font-size: 0.7rem;
+      font-weight: 700; letter-spacing: 0.07em;
+      text-transform: uppercase; border-bottom: 1px solid var(--border);
+      background: var(--bg);
+    }
+    .records-table th:first-child { border-radius: var(--radius-sm) 0 0 0; }
+    .records-table th:last-child { border-radius: 0 var(--radius-sm) 0 0; }
+    .records-table td {
+      padding: 10px 14px; color: var(--text);
+      border-bottom: 1px solid var(--border);
+    }
+    .records-table tr:last-child td { border-bottom: none; }
+    .records-table tbody tr:hover td { background: #F8FAFC; }
+    .decrypt-btn {
+      background: var(--accent); color: #fff; border: none;
+      padding: 5px 14px; border-radius: 6px;
+      font-size: 0.72rem; font-weight: 600;
+      cursor: pointer; transition: var(--transition);
+      letter-spacing: 0.02em;
+    }
+    .decrypt-btn:hover { background: var(--accent-hover); }
+    .delete-btn {
+      background: #FEF2F2; color: #DC2626;
+      border: 1px solid #FECACA; border-radius: 6px;
+      padding: 5px 10px; font-size: 0.78rem;
+      font-weight: 600; cursor: pointer;
+      transition: all 0.2s; white-space: nowrap;
+    }
+    .delete-btn:hover { background: #DC2626; color: #fff; }
+    .delete-btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+    /* ===================== SPINNER ===================== */
+    .spinner {
+      display: inline-block; width: 14px; height: 14px;
+      border: 2px solid rgba(255, 255, 255, 0.35);
+      border-top-color: #fff; border-radius: 50%;
+      animation: spin 0.65s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    /* ===================== NOTIFICATION ===================== */
+    #notification {
+      position: fixed; top: 24px; right: 24px; z-index: 1000;
+      background: var(--card); border-left: 4px solid var(--primary);
+      color: var(--text); font-size: 0.875rem; font-weight: 500;
+      padding: 14px 20px; border-radius: var(--radius-sm);
+      box-shadow: var(--shadow-lg); transform: translateX(200%);
+      transition: transform 0.3s ease; max-width: 340px;
+    }
+    #notification.show { transform: translateX(0); }
+    #notification.error { border-left-color: #DC2626; }
+
+    /* ===================== FOOTER ===================== */
+    footer {
+      background: #1A202C; color: #A0AEC0;
+      padding: 32px 40px; text-align: center;
+      font-size: 0.82rem;
+    }
+    footer a { color: #718096; text-decoration: none; }
+    footer a:hover { color: #A0AEC0; }
+
+    /* ===================== EMPTY STATE ===================== */
+    .empty-state {
+      text-align: center; padding: 40px 20px;
+    }
+    .empty-state-icon {
+      font-size: 48px; margin-bottom: 16px; opacity: 0.6;
+    }
+    .empty-state p {
+      color: var(--text-muted); font-size: 0.88rem; margin-bottom: 16px;
+    }
+    .empty-state a {
+      color: var(--accent); text-decoration: none; font-weight: 600;
+      font-size: 0.85rem;
+    }
+    .empty-state a:hover { text-decoration: underline; }
+
+    /* ===================== RESPONSIVE ===================== */
+    @media (max-width: 768px) {
+      .navbar { padding: 0 20px; }
+      .nav-links {
+        display: none; flex-direction: column;
+        position: absolute; top: 64px; left: 0; right: 0;
+        background: #fff; border-bottom: 1px solid var(--border);
+        padding: 12px 20px; box-shadow: var(--shadow-md); gap: 2px;
+      }
+      .nav-links.open { display: flex; }
+      .nav-links a { padding: 10px 14px; display: block; border-radius: var(--radius-sm); }
+      .nav-hamburger { display: flex; }
+      .page-hero { padding: 40px 20px 32px; }
+      .portal-content { padding: 0 16px; margin-top: -24px; }
+      .card { padding: 24px 20px; }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ===================== NAVBAR ===================== -->
+  <nav class="navbar">
+    <a href="/" class="nav-logo">
+      <div class="nav-logo-icon">🌾</div>
+      Agro<span>Secure</span>
+    </a>
+    <ul class="nav-links" id="nav-links">
+      <li><a href="/">Home</a></li>
+      <li><a href="/farmer">Farmer Portal</a></li>
+      <li><a href="/department" class="active">Department Portal</a></li>
+      <li><a href="/logout" class="nav-cta" style="background:var(--primary)!important;color:#fff!important;"
+          onclick="return confirm('Are you sure you want to logout?')">🚪 Logout</a></li>
+    </ul>
+    <button class="nav-hamburger" id="hamburger" aria-label="Toggle menu" onclick="toggleNav()">
+      <span></span><span></span><span></span>
+    </button>
+  </nav>
+
+  <!-- ===================== PAGE HERO ===================== -->
+  <section class="page-hero">
+    <div class="page-hero-icon">🏛️</div>
+    <h1>Department <span class="highlight">Portal</span></h1>
+    <p>Retrieve, decrypt, and verify encrypted crop records. All records are verified for data integrity (SHA-256) and
+      authenticity (RSA-2048 digital signature).</p>
+  </section>
+
+  <!-- ===================== PORTAL CONTENT ===================== -->
+  <div class="portal-content">
+
+    <!-- Decrypt Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon blue">🔓</div>
+        <div>
+          <div class="card-header-title">Decrypt & Verify Record</div>
+          <div class="card-header-subtitle">Enter a record ID to retrieve and verify the encrypted data</div>
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label for="record-id">Record ID</label>
+        <input type="number" id="record-id" placeholder="Enter record ID from database" min="1">
+      </div>
+      <button class="btn btn-primary btn-block" id="decrypt-btn" onclick="decryptData()">
+        🔓 Decrypt &amp; Verify
+      </button>
+
+      <div class="result-card" id="decrypt-result">
+        <div id="decrypt-output"></div>
+      </div>
+    </div>
+
+    <!-- Records Card -->
+    <div class="card">
+      <div class="card-header">
+        <div class="card-header-icon blue">🗄️</div>
+        <div>
+          <div class="card-header-title">Stored Records</div>
+          <div class="card-header-subtitle">All encrypted crop data records in the database</div>
+        </div>
+      </div>
+      <div id="records-container">
+        <div class="empty-state">
+          <div class="empty-state-icon">📭</div>
+          <p>No records yet. Ask a farmer to submit data first.</p>
+          <a href="/farmer">→ Go to Farmer Portal</a>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- ===================== FOOTER ===================== -->
+  <footer>
+    <div>© 2024 AgroSecure — Secure Crop Data Sharing System · <a href="/">Home</a></div>
+  </footer>
+
+  <div id="notification"></div>
+
+  <script>
+    /* ---- NAVBAR toggle ---- */
+    function toggleNav() {
+      document.getElementById('nav-links').classList.toggle('open');
+    }
+    document.querySelectorAll('.nav-links a').forEach(a => {
+      a.addEventListener('click', () => document.getElementById('nav-links').classList.remove('open'));
+    });
+
+    /* ---- NOTIFICATION ---- */
+    function notify(msg, ok = true) {
+      const n = document.getElementById('notification');
+      n.textContent = msg;
+      n.classList.toggle('error', !ok);
+      n.style.borderLeftColor = ok ? 'var(--primary)' : '#DC2626';
+      n.classList.add('show');
+      setTimeout(() => n.classList.remove('show'), 3500);
+    }
+
+    /* ---- DECRYPT ---- */
+    async function decryptData() {
+      const id = document.getElementById('record-id').value;
+      if (!id) { notify('Enter a Record ID', false); return; }
+
+      const btn = document.getElementById('decrypt-btn');
+      btn.disabled = true;
+      btn.innerHTML = '<span class="spinner"></span> Decrypting…';
+
+      try {
+        const res = await fetch(`/api/decrypt/${id}`);
+        const json = await res.json();
+
+        const rc = document.getElementById('decrypt-result');
+        const out = document.getElementById('decrypt-output');
+        rc.classList.add('visible');
+
+        if (!json.success) {
+          out.innerHTML = `<div style="color:#DC2626;font-size:0.85rem;padding:8px 0;">❌ ${json.error}</div>`;
+          notify(json.error, false);
+          return;
+        }
+
+        out.innerHTML = `
+        <div class="result-row">
+          <span class="result-label">Farmer</span>
+          <span class="result-value" style="font-weight:600;color:var(--text)">${json.farmer_name}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Decrypted Data</span>
+          <span class="result-value" style="color:var(--primary)">${json.decrypted_data}</span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Integrity Check</span>
+          <span class="result-value">
+            <span class="status ${json.integrity_check ? 'ok' : 'fail'}">
+              ${json.integrity_check ? '✅ SHA-256 MATCH' : '❌ HASH MISMATCH'}
+            </span>
+          </span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">RSA Signature</span>
+          <span class="result-value">
+            <span class="status ${json.signature_valid ? 'ok' : 'fail'}">
+              ${json.signature_valid ? '✅ RSA VERIFIED' : '❌ INVALID SIG'}
+            </span>
+          </span>
+        </div>
+        <div class="result-row">
+          <span class="result-label">Timestamp</span>
+          <span class="result-value">${json.timestamp}</span>
+        </div>
+        <ul class="steps-list">
+          ${json.steps.map((s, i) => `<li><span class="step-num">${i + 1}</span>${s}</li>`).join('')}
+        </ul>
+      `;
+        notify(`Record #${id} decrypted successfully!`);
+      } catch (e) {
+        notify('Decryption failed: ' + e.message, false);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = '🔓 Decrypt &amp; Verify';
+      }
+    }
+
+    /* ---- LOAD RECORDS ---- */
+    async function loadRecords() {
+      try {
+        const res = await fetch('/api/records');
+        const records = await res.json();
+        const container = document.getElementById('records-container');
+
+        if (!records.length) {
+          container.innerHTML = `
+            <div class="empty-state">
+              <div class="empty-state-icon">📭</div>
+              <p>No records yet. Ask a farmer to submit data first.</p>
+              <a href="/farmer">→ Go to Farmer Portal</a>
+            </div>`;
+          return;
+        }
+
+        container.innerHTML = `
+        <table class="records-table">
+          <thead>
+            <tr>
+              <th>ID</th><th>Farmer</th><th>SHA-256</th><th>Time</th><th>Actions</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${records.map(r => `
+              <tr>
+                <td style="font-weight:600">#${r.id}</td>
+                <td>${r.farmer}</td>
+                <td style="font-size:0.68rem;color:var(--text-muted);font-family:'Courier New',monospace">${r.hash}</td>
+                <td style="color:var(--text-muted)">${r.timestamp.substring(11, 19)}</td>
+                <td style="display:flex;gap:6px;"><button class="decrypt-btn" onclick="quickDecrypt(${r.id})">🔓 Decrypt</button><button class="delete-btn" onclick="deleteRecord(${r.id},this)">🗑️</button></td>
+              </tr>
+            `).join('')}
+          </tbody>
+        </table>
+      `;
+      } catch (e) { }
+    }
+
+    function quickDecrypt(id) {
+      document.getElementById('record-id').value = id;
+      decryptData();
+      document.getElementById('decrypt-result').scrollIntoView({ behavior: 'smooth' });
+    }
+
+    /* ---- DELETE RECORD ---- */
+    async function deleteRecord(id, btn) {
+      if (!confirm(`Delete Record #${id}? This cannot be undone.`)) return;
+      btn.disabled = true;
+      btn.textContent = '…';
+      try {
+        const res = await fetch(`/api/records/${id}`, { method: 'DELETE' });
+        const json = await res.json();
+        if (json.success) {
+          btn.closest('tr').remove();
+          notify(`Record #${id} deleted.`);
+          const tbody = document.querySelector('.records-table tbody');
+          if (tbody && tbody.rows.length === 0) loadRecords();
+        } else {
+          notify(json.error || 'Delete failed.', false);
+          btn.disabled = false; btn.textContent = '🗑️';
+        }
+      } catch (e) {
+        notify('Delete error: ' + e.message, false);
+        btn.disabled = false; btn.textContent = '🗑️';
+      }
+    }
+
+    /* Initial load */
+    loadRecords();
+  </script>
+</body>
+
+</html>
