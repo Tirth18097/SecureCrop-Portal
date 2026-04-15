@@ -18,11 +18,18 @@ A full-stack cryptography project implementing **AES-128**, **SHA-256**, and **R
 
 ```
 secure_crop_portal/
-├── app.py                  # Flask backend (all crypto logic)
-├── requirements.txt        # Python dependencies
-├── crop_data.db            # SQLite database (auto-created)
+├── app.py                         # Flask backend (all crypto logic)
+├── requirements.txt               # Python dependencies
+├── .env                           # Twilio API keys (not tracked)
+├── crop_data.db                   # SQLite database (auto-created)
+├── assets/
+│   └── workflow.png               # System workflow diagram
 ├── templates/
-│   └── index.html          # Frontend portal
+│   ├── index.html                 # Landing page
+│   ├── login.html                 # OTP authentication page
+│   ├── farmer.html                # Farmer portal
+│   ├── department.html            # Department portal
+│   └── admin_login.html           # Admin login page
 └── README.md
 ```
 
@@ -30,17 +37,31 @@ secure_crop_portal/
 
 ## 🚀 Setup & Run
 
-### 1. Install dependencies
+### 1. Clone the repository
+```bash
+git clone https://github.com/Tirth18097/SecureCrop-Portal.git
+cd SecureCrop-Portal
+```
+
+### 2. Install dependencies
 ```bash
 pip install -r requirements.txt
 ```
 
-### 2. Run the Flask server
+### 3. Configure environment variables
+Create a `.env` file in the root directory:
+```env
+TWILIO_ACCOUNT_SID=your_account_sid
+TWILIO_AUTH_TOKEN=your_auth_token
+TWILIO_VERIFY_SID=your_verify_sid
+```
+
+### 4. Run the Flask server
 ```bash
 python app.py
 ```
 
-### 3. Open in browser
+### 5. Open in browser
 ```
 http://localhost:5000
 ```
@@ -49,28 +70,35 @@ http://localhost:5000
 
 ## 🔄 System Workflow
 
-```
-Farmer Login
-    ↓
-Enter Crop Data
-    ↓
-SHA-256 Hash Generated  ────────────────────────┐
-    ↓                                            │
-AES-128 Encryption (CBC)                         │
-    ↓                                            │
-RSA-2048 Digital Signature                       │
-    ↓                                            │
-Stored in SQLite Database ◄──────────────────────┘
-    ↓
-Agricultural Department Retrieves
-    ↓
-AES Decryption
-    ↓
-SHA-256 Integrity Check ✅
-    ↓
-RSA Signature Verification ✅
-    ↓
-Original Data Displayed
+<p align="center">
+  <img src="assets/workflow.png" alt="SecureCrop System Workflow" width="700"/>
+</p>
+
+```mermaid
+flowchart TD
+    A["🔐 Farmer Login (OTP via Twilio)"] --> B["📝 Enter Crop Data"]
+    B --> C["#️⃣ SHA-256 Hash Generated"]
+    C --> D["🔑 AES-128 Encryption (CBC Mode)"]
+    D --> E["✍️ RSA-2048 Digital Signature"]
+    C -. "Hash stored alongside data" .-> F
+    E --> F["💾 Stored in SQLite Database"]
+    F --> G["🏛️ Agricultural Department Retrieves"]
+    G --> H["🔓 AES-128 Decryption"]
+    H --> I["✅ SHA-256 Integrity Check — PASSED"]
+    I --> J["✅ RSA Signature Verification — AUTHENTIC"]
+    J --> K["📊 Original Crop Data Displayed"]
+
+    style A fill:#1a7f37,stroke:#2ea043,color:#fff
+    style B fill:#1f3a5f,stroke:#388bfd,color:#fff
+    style C fill:#3b2f63,stroke:#8b5cf6,color:#fff
+    style D fill:#0e4a5c,stroke:#2dd4bf,color:#fff
+    style E fill:#5c3a1e,stroke:#f59e0b,color:#fff
+    style F fill:#1c1c2e,stroke:#2ea043,color:#fff
+    style G fill:#1f3a5f,stroke:#388bfd,color:#fff
+    style H fill:#0e4a5c,stroke:#2dd4bf,color:#fff
+    style I fill:#1a4a2e,stroke:#2ea043,color:#fff
+    style J fill:#1a4a2e,stroke:#2ea043,color:#fff
+    style K fill:#0d5a2e,stroke:#3fb950,color:#fff
 ```
 
 ---
@@ -79,9 +107,14 @@ Original Data Displayed
 
 | Method | Endpoint | Description |
 |--------|----------|-------------|
+| `POST` | `/api/send-otp` | Send OTP to phone via Twilio |
+| `POST` | `/api/verify-otp` | Verify OTP and authenticate |
 | `POST` | `/api/encrypt` | Encrypt & store crop data |
 | `GET` | `/api/decrypt/<id>` | Decrypt & verify record |
 | `GET` | `/api/records` | List all stored records |
+| `DELETE` | `/api/records/<id>` | Delete a crop record |
+| `POST` | `/api/admin-login` | Admin authentication |
+| `GET` | `/api/me` | Get current user info |
 
 ---
 
